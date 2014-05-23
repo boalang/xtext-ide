@@ -1,0 +1,338 @@
+grammar edu.iastate.cs.boa.Boa hidden(WS, LINE_COMMENT)
+
+generate boa "http://www.iastate.edu/cs/boa/Boa"
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+Program returns Block: stmts+=ProgramStatement+;
+
+ProgramStatement returns Statement:
+	Declaration
+	| Statement;
+
+Declaration returns Statement:
+	TypeDeclaration
+	| StaticVariableDeclaration
+	| VariableDeclaration;
+
+Type:
+	(ArrayType
+	| MapType
+	| TupleType
+	| OutputType
+	| FunctionType
+	| VisitorType
+	| StackType
+	| SetType
+	| Identifier);
+
+TypeDeclaration:
+	'type' name=Identifier '=' type=Type;
+
+StaticVariableDeclaration:
+	'static' variable=VariableDeclaration;
+
+VariableDeclaration:
+	ForVariableDeclaration ';';
+
+Component:
+	(name=Identifier ':')? type=Type;
+
+TupleType:
+	{TupleType}
+	'{' (m1=Member (',' m2+=Member)* ','?)? '}';
+
+Member:
+	TypeDeclaration
+	| StaticVariableDeclaration
+	| Component;
+
+ArrayType returns Type:
+	'array' {ArrayType} 'of' values=Component;
+
+MapType returns Type:
+	'map' {MapType} '[' index=Component ']' 'of' values=Component;
+
+StackType returns Type:
+	'stack' {StackType} 'of' values=Component;
+
+SetType returns Type:
+	'set' {SetType} 'of' values=Component;
+
+OutputType:
+	'output' ('set' | Identifier) ('(' el=ExpressionList ')')? ('[' c1+=Component ']')* 'of' c=Component (=> 'weight'
+	c2=Component)? (=> 'format' '(' e2=ExpressionList ')')?;
+
+FunctionType:
+	'function' {FunctionType} '(' (id=Identifier ':' type=Type (',' ids+=Identifier ':' types+=Type)*)? ')' (':' return=Type)?;
+
+VisitorType:
+	{VisitorType}
+	'visitor';
+
+// FIXME: had to enable backtracking for this rule and
+// not sure these semantic predicates are right
+Statement:
+	(=> b=Block
+	| => ast=AssignmentStatement
+	| br=BreakStatement
+	| con=ContinueStatement
+	| st=StopStatement
+	| dst=DoStatement
+	| fst=ForStatement
+	| ist=IfStatement
+	| rst=ResultStatement
+	| rtst=ReturnStatement
+	| swst=SwitchStatement
+	| fest=ForeachStatement
+	| exst=ExistsStatement
+	| iast=IfallStatement
+	| wst=WhileStatement
+	| emp=EmptyStatement
+	| emst=EmitStatement
+	| expst=ExpressionStatement);
+
+EmptyStatement:
+	{EmptyStatement}
+	';';
+
+AssignmentStatement:
+	lhs=Factor '=' rhs=Expression ';';
+
+Block:
+	'{' {Block} stmts+=ProgramStatement* '}';
+
+BreakStatement:
+	'break' {BreakStatement} ';';
+
+ContinueStatement:
+	'continue' {ContinueStatement} ';';
+
+DoStatement:
+	'do' body=Statement 'while' '(' condition=Expression ')' ';';
+
+EmitStatement:
+	var=Identifier ('[' e1+=Expression ']')* '<<' e2=Expression ('weight' e3=Expression)? ';';
+
+ForStatement:
+	'for' '(' (init=ForExpression)? ';' (cond=Expression)? ';' (update=ForExpression)? ')' body=Statement;
+
+ForExpression:
+	ForVariableDeclaration
+	| ForExpressionStatement;
+
+ForVariableDeclaration:
+	name=Identifier ':' (type=Type)? ('=' init=Expression)?;
+
+ForExpressionStatement:
+	expr=Expression postfix=('++' | '--')?;
+
+ExpressionStatement:
+	ForExpressionStatement ';';
+
+IfStatement:
+	'if' '(' Expression ')' s1=Statement (=> 'else' s2=Statement)?;
+
+ResultStatement:
+	'result' Expression ';';
+
+ReturnStatement:
+	'return' {Return} e1=Expression? ';';
+
+SwitchStatement:
+	'switch' '(' expr=Expression ')' '{'
+	cases+=SwitchCase*
+	'default' ':'
+	defaultStmts+=Statement+
+	'}';
+
+SwitchCase:
+	'case' cases=ExpressionList ':' stmts+=Statement+;
+
+ForeachStatement:
+	'foreach' '(' name=Identifier ':' type=Type ';' condition=Expression ')' stmt=Statement;
+
+ExistsStatement:
+	'exists' '(' name=Identifier ':' type=Type ';' condition=Expression ')' stmt=Statement;
+
+IfallStatement:
+	'ifall' '(' name=Identifier ':' type=Type ';' condition=Expression ')' stmt=Statement;
+
+WhileStatement:
+	'while' '(' condition=Expression ')' stmt=Statement;
+
+VisitStatement:
+	('before' | 'after')
+	(
+		'_'
+		| name=Identifier ':' type=Identifier
+		| name=Identifier (',' names+=Identifier)*
+	)
+	'->' stmts=ProgramStatement;
+
+StopStatement:
+	'stop' {StopStatement} ';';
+
+Expression:
+	lhs=Conjunction (('||' | 'or') rhs+=Conjunction)*;
+
+ExpressionList:
+	e1=Expression (',' e2+=Expression)*;
+
+Conjunction:
+	lhs=Comparison (('&&' | 'and') rhs+=Comparison)*;
+
+Comparison:
+	lhs=SimpleExpression (('==' | '!=' | '<' | '<=' | '>' | '>=') rhs=SimpleExpression)?;
+
+SimpleExpression:
+	lhs=Term (('+' | '-' | '|' | '^') rhs+=Term)*;
+
+Term:
+	lhs=Factor (('*' | '/' | '%' | '<<' | '>>' | '&') rhs+=Factor)*;
+
+// FIXME: not sure this semantic predicate is right
+Factor:
+	operand=Operand => ops+=(Selector | Index | Call)*;
+
+Selector returns op:
+	'.' {Selector} name=Identifier;
+
+Index returns op:
+	'[' {Index} start=Expression (':' end=Expression)? ']';
+
+Call returns op:
+	'(' {Call} args=ExpressionList? ')';
+
+Operand:
+	(StringLiteral
+	| {CharacterLiteral} lit=CHARACTER_LIT
+	| {TimeLiteral} lit=TIME_LIT
+	| {IntegerLiteral} lit=INTEGER_LIT
+	| {FloatingLiteral} lit=FLOATING_LIT
+	| Composite
+	| FunctionExpression
+	| VisitorExpression
+	| UnaryFactor
+	| {DollarOperand} dol='$'
+	| StatementExpression
+	| ParenExpression
+	| Identifier);
+
+UnaryFactor:
+	('+' | '-' | '~' | '!' | 'not') Factor;
+
+ParenExpression:
+	'(' Expression ')';
+
+FunctionExpression:
+	(type=FunctionType | name=Identifier) body=Block;
+
+VisitorExpression:
+	type=VisitorType '{' (stmts+=VisitStatement)+ '}';
+
+StatementExpression:
+	'?' Block;
+
+// FIXME: not sure this semantic predicate is right
+Composite:
+	'{' {Composite} (=> el=ExpressionList | p1=Pair (',' p2+=Pair)* | ':')? '}';
+
+Pair:
+	lhs=Expression ':' rhs=Expression;
+
+Identifier:
+	lit=ID
+	| lit='format';
+
+StringLiteral:
+	lit=STRING_LIT
+	| lit=REGEX_LIT;
+
+//
+// literals
+//
+
+terminal fragment DIGIT:
+	'0'
+	| NON_ZERO_DIGIT;
+
+terminal fragment NON_ZERO_DIGIT:
+	'1'..'9';
+
+terminal INTEGER_LIT:
+	'-'? DECIMAL_NUMERAL
+	| '-'? HEX_NUMERAL
+	| '-'? OCTAL_NUMERAL
+	| BINARY_NUMERAL;
+
+terminal fragment DECIMAL_NUMERAL:
+	NON_ZERO_DIGIT DIGIT*;
+
+terminal fragment HEX_NUMERAL:
+	'0' ('x' | 'X') ('0'..'9' | 'a'..'f' | 'A'..'F')+;
+
+terminal fragment OCTAL_NUMERAL:
+	'0' '0'..'7'*;
+
+terminal fragment BINARY_NUMERAL:
+	'0' ('b' | 'B') ('0' | '1')+;
+
+terminal FLOATING_LIT:
+	'-'? DIGIT+ '.' DIGIT* EXPONENT_PART?
+	| '-'? '.' DIGIT+ EXPONENT_PART?
+	| '-'? DIGIT+ EXPONENT_PART;
+
+terminal fragment EXPONENT_PART:
+	('e' | 'E') ('+' | '-')? DIGIT+;
+
+terminal CHARACTER_LIT:
+	"'" SINGLE_CHARACTER "'"
+	| "'" ESCAPE_SEQUENCE "'";
+
+terminal fragment SINGLE_CHARACTER:
+	!('\'' | '\\' | '\n' | '\r');
+
+terminal REGEX_LIT:
+	'`' REGEX_CHARACTER* '`';
+
+terminal fragment REGEX_CHARACTER:
+	!('`' | '\n' | '\r');
+
+terminal STRING_LIT:
+	'"' STRING_CHARACTER* '"';
+
+terminal fragment STRING_CHARACTER:
+	!('"' | '\\' | '\n' | '\r')
+	| ESCAPE_SEQUENCE;
+
+terminal fragment ESCAPE_SEQUENCE:
+	'\\' ('b' | 't' | 'n' | 'f' | 'r' | '"' | '\'' | '\\')
+	| OCTAL_ESCAPE;
+
+terminal fragment OCTAL_ESCAPE:
+	'\\' '0'..'7'
+	| '\\' '0'..'7' '0'..'7'
+	| '\\' '0'..'3' '0'..'7' '0'..'7';
+
+terminal TIME_LIT:
+	INTEGER_LIT ('t' | 'T')?
+	| 'T' STRING_LIT;
+
+//
+// identifiers
+//
+
+terminal ID:
+	('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '0'..'9')*;
+
+//
+// whitespace and comments
+//
+
+terminal WS:
+	// FIXME: for some reason the unicode char gives duplicate error with '\f'
+	(' ' | '\t' | '\r' | '\n' | '\f' /*| '\u000C'*/)+;
+
+terminal LINE_COMMENT:
+	'#' !('\r' | '\n')*;
