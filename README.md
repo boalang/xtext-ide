@@ -1,5 +1,16 @@
-INSTALL XTEXT FIRST!
-http://www.eclipse.org/Xtext/download.html
+# Boa's XText-based IDE #
+
+INSTALL XTEXT FIRST! 
+
+This is Boa's XText-based IDE, which is a plugin for Eclipse.
+
+### Pre-requisites ###
+
+XText is required to compile the IDE.  You can download it here:
+
+	http://www.eclipse.org/Xtext/download.html
+
+### Project Organization ###
 
 This repository contains 4 Eclipse projects:
 
@@ -16,7 +27,11 @@ Important files:
 
 If you modify the input grammar (Boa.xtext) or modeling engine workflow file (GenerateBoa.mwe2) you must rebuild!
 
+### Re-generating Files ###
+
 Open the GenerateBoa.mwe2 file and Run As -> MWE2 Workflow.  This requires a lot of memory and time!
+
+### Running the IDE ###
 
 Once you have all files built, you can run the custom IDE:
 
