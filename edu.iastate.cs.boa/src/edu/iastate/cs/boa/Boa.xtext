@@ -73,24 +73,24 @@ VisitorType:
 // FIXME: had to enable backtracking for this rule and
 // not sure these semantic predicates are right
 Statement:
-	(=> b=Block
-	| => ast=AssignmentStatement
-	| br=BreakStatement
-	| con=ContinueStatement
-	| st=StopStatement
-	| dst=DoStatement
-	| fst=ForStatement
-	| ist=IfStatement
-	| rst=ResultStatement
-	| rtst=ReturnStatement
-	| swst=SwitchStatement
-	| fest=ForeachStatement
-	| exst=ExistsStatement
-	| iast=IfallStatement
-	| wst=WhileStatement
-	| emp=EmptyStatement
-	| emst=EmitStatement
-	| expst=ExpressionStatement);
+	(=> Block
+	| => AssignmentStatement
+	| BreakStatement
+	| ContinueStatement
+	| StopStatement
+	| DoStatement
+	| ForStatement
+	| IfStatement
+	| ResultStatement
+	| ReturnStatement
+	| SwitchStatement
+	| ForeachStatement
+	| ExistsStatement
+	| IfallStatement
+	| WhileStatement
+	| EmptyStatement
+	| EmitStatement
+	| ExpressionStatement);
 
 EmptyStatement:
 	{EmptyStatement}
