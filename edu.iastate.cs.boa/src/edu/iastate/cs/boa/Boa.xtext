@@ -33,38 +33,41 @@ StaticVariableDeclaration:
 	'static' variable=VariableDeclaration;
 
 VariableDeclaration:
-	ForVariableDeclaration ';';
+	variable=ForVariableDeclaration ';';
 
 Component:
 	(name=Identifier ':')? type=Type;
 
 TupleType:
 	{TupleType}
-	'{' (m1=Member (',' m2+=Member)* ','?)? '}';
+	'{' (head=Member (',' tail+=Member)* ','?)? '}';
 
 Member:
 	TypeDeclaration
 	| StaticVariableDeclaration
 	| Component;
 
-ArrayType returns Type:
+ArrayType:
 	'array' {ArrayType} 'of' values=Component;
 
-MapType returns Type:
+MapType:
 	'map' {MapType} '[' index=Component ']' 'of' values=Component;
 
-StackType returns Type:
+StackType:
 	'stack' {StackType} 'of' values=Component;
 
-SetType returns Type:
+SetType:
 	'set' {SetType} 'of' values=Component;
 
 OutputType:
-	'output' ('set' | Identifier) ('(' el=ExpressionList ')')? ('[' c1+=Component ']')* 'of' c=Component (=> 'weight'
-	c2=Component)? (=> 'format' '(' e2=ExpressionList ')')?;
+	'output' name=Identifier ('(' params=ExpressionList ')')? ('[' indexes+=Component ']')* 'of' type=Component
+		(=> 'weight' weight=Component)? (=> 'format' '(' format=ExpressionList ')')?;
 
 FunctionType:
-	'function' {FunctionType} '(' (id=Identifier ':' type=Type (',' ids+=Identifier ':' types+=Type)*)? ')' (':' return=Type)?;
+	'function' {FunctionType} '(' (paramsHead=Parameter (',' paramsTail+=Parameter)*)? ')' (':' return=Type)?;
+
+Parameter:
+	name=Identifier ':' type=Type;
 
 VisitorType:
 	{VisitorType}
@@ -93,8 +96,7 @@ Statement:
 	| ExpressionStatement);
 
 EmptyStatement:
-	{EmptyStatement}
-	';';
+	';' {EmptyStatement};
 
 AssignmentStatement:
 	lhs=Factor '=' rhs=Expression ';';
@@ -112,10 +114,10 @@ DoStatement:
 	'do' body=Statement 'while' '(' condition=Expression ')' ';';
 
 EmitStatement:
-	var=Identifier ('[' e1+=Expression ']')* '<<' e2=Expression ('weight' e3=Expression)? ';';
+	name=Identifier ('[' indexes+=Expression ']')* '<<' value=Expression ('weight' weight=Expression)? ';';
 
 ForStatement:
-	'for' '(' (init=ForExpression)? ';' (cond=Expression)? ';' (update=ForExpression)? ')' body=Statement;
+	'for' '(' (init=ForExpression)? ';' (condition=Expression)? ';' (update=ForExpression)? ')' body=Statement;
 
 ForExpression:
 	ForVariableDeclaration
@@ -128,16 +130,16 @@ ForExpressionStatement:
 	expr=Expression postfix=('++' | '--')?;
 
 ExpressionStatement:
-	ForExpressionStatement ';';
+	expr=ForExpressionStatement ';';
 
 IfStatement:
-	'if' '(' Expression ')' s1=Statement (=> 'else' s2=Statement)?;
+	'if' '(' condition=Expression ')' body=Statement (=> 'else' else=Statement)?;
 
 ResultStatement:
-	'result' Expression ';';
+	'result' expr=Expression ';';
 
 ReturnStatement:
-	'return' {Return} e1=Expression? ';';
+	'return' {Return} expr=Expression? ';';
 
 SwitchStatement:
 	'switch' '(' expr=Expression ')' '{'
@@ -150,23 +152,23 @@ SwitchCase:
 	'case' cases=ExpressionList ':' stmts+=Statement+;
 
 ForeachStatement:
-	'foreach' '(' name=Identifier ':' type=Type ';' condition=Expression ')' stmt=Statement;
+	'foreach' '(' variable=Parameter ';' condition=Expression ')' body=Statement;
 
 ExistsStatement:
-	'exists' '(' name=Identifier ':' type=Type ';' condition=Expression ')' stmt=Statement;
+	'exists' '(' variable=Parameter ';' condition=Expression ')' body=Statement;
 
 IfallStatement:
-	'ifall' '(' name=Identifier ':' type=Type ';' condition=Expression ')' stmt=Statement;
+	'ifall' '(' variable=Parameter ';' condition=Expression ')' body=Statement;
 
 WhileStatement:
-	'while' '(' condition=Expression ')' stmt=Statement;
+	'while' '(' condition=Expression ')' body=Statement;
 
 VisitStatement:
 	('before' | 'after')
 	(
-		'_'
-		| name=Identifier ':' type=Identifier
-		| name=Identifier (',' names+=Identifier)*
+		wildcard='_'
+		| param=Parameter
+		| head=Identifier (',' tail+=Identifier)*
 	)
 	'->' stmts=ProgramStatement;
 
@@ -177,39 +179,40 @@ Expression:
 	lhs=Conjunction (('||' | 'or') rhs+=Conjunction)*;
 
 ExpressionList:
-	e1=Expression (',' e2+=Expression)*;
+	head=Expression (',' tail+=Expression)*;
 
 Conjunction:
 	lhs=Comparison (('&&' | 'and') rhs+=Comparison)*;
 
 Comparison:
-	lhs=SimpleExpression (('==' | '!=' | '<' | '<=' | '>' | '>=') rhs=SimpleExpression)?;
+	lhs=SimpleExpression (op=('==' | '!=' | '<' | '<=' | '>' | '>=') rhs=SimpleExpression)?;
 
 SimpleExpression:
-	lhs=Term (('+' | '-' | '|' | '^') rhs+=Term)*;
+	lhs=Term (ops+=('+' | '-' | '|' | '^') rhs+=Term)*;
 
 Term:
-	lhs=Factor (('*' | '/' | '%' | '<<' | '>>' | '&') rhs+=Factor)*;
+	lhs=Factor (ops+=('*' | '/' | '%' | '<<' | '>>' | '&') rhs+=Factor)*;
 
 // FIXME: not sure this semantic predicate is right
 Factor:
 	operand=Operand => ops+=(Selector | Index | Call)*;
 
-Selector returns op:
+Selector:
 	'.' {Selector} name=Identifier;
 
-Index returns op:
+Index:
 	'[' {Index} start=Expression (':' end=Expression)? ']';
 
-Call returns op:
+Call:
 	'(' {Call} args=ExpressionList? ')';
 
 Operand:
-	(StringLiteral
+	( {StringLiteral}    lit=STRING_LIT
+	| {StringLiteral}    lit=REGEX_LIT
 	| {CharacterLiteral} lit=CHARACTER_LIT
-	| {TimeLiteral} lit=TIME_LIT
-	| {IntegerLiteral} lit=INTEGER_LIT
-	| {FloatingLiteral} lit=FLOATING_LIT
+	| {TimeLiteral}      lit=TIME_LIT
+	| {IntegerLiteral}   lit=INTEGER_LIT
+	| {FloatingLiteral}  lit=FLOATING_LIT
 	| Composite
 	| FunctionExpression
 	| VisitorExpression
@@ -220,10 +223,10 @@ Operand:
 	| Identifier);
 
 UnaryFactor:
-	('+' | '-' | '~' | '!' | 'not') Factor;
+	op=('+' | '-' | '~' | '!' | 'not') operand=Factor;
 
 ParenExpression:
-	'(' Expression ')';
+	'(' expr=Expression ')';
 
 FunctionExpression:
 	(type=FunctionType | name=Identifier) body=Block;
@@ -232,7 +235,7 @@ VisitorExpression:
 	type=VisitorType '{' (stmts+=VisitStatement)+ '}';
 
 StatementExpression:
-	'?' Block;
+	'?' body=Block;
 
 // FIXME: not sure this semantic predicate is right
 Composite:
@@ -244,10 +247,6 @@ Pair:
 Identifier:
 	lit=ID
 	| lit='format';
-
-StringLiteral:
-	lit=STRING_LIT
-	| lit=REGEX_LIT;
 
 //
 // literals
