@@ -1,4 +1,4 @@
-package edu.iastate.cs.boa.ui;
+package edu.iastate.cs.boa.ui.syntaxcoloring;
 
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeIdMapper;
 

@@ -7,6 +7,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
 
+import edu.iastate.cs.boa.ui.syntaxcoloring.BoaAntlrTokenToAttributeIdMapper;
+import edu.iastate.cs.boa.ui.syntaxcoloring.BoaHighlightingConfiguration;
+
 /**
  * Use this class to register components to be used within the IDE.
  */
