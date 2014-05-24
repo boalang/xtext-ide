@@ -393,4 +393,15 @@
     </provider>
   </extension>
 
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.eclipse.xtext.projectwiz"
+            class="edu.iastate.cs.boa.ui.BoaExecutableExtensionFactory:edu.iastate.cs.boa.ui.wizard.BoaNewProjectWizard"
+            id="edu.iastate.cs.boa.ui.wizard.BoaNewProjectWizard"
+            name="Boa Project"
+            project="true">
+      </wizard>
+   </extension>
+
 </plugin>

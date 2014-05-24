@@ -121,6 +121,12 @@ Workflow {
 
 			// provides a compare view
 			fragment = compare.CompareFragment auto-inject {}
+
+			// project wizard fragment
+			fragment = projectWizard.SimpleProjectWizardFragment auto-inject {
+				generatorProjectName = "${projectName}.generator"
+				fileExtension = fileExtensions
+			}
 		}
 	}
 }

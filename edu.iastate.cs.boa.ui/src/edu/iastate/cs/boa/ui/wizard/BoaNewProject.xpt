@@ -1,0 +1,17 @@
+«IMPORT edu::iastate::cs::boa::ui::wizard»
+
+«DEFINE main FOR BoaProjectInfo»
+«EXPAND model FOR this»
+«ENDDEFINE»
+
+«DEFINE model FOR BoaProjectInfo»
+«FILE "main.boa"-»
+# this is an example query
+# Counting the 10 most used programming languages
+p: Project = input;
+counts: output top(10) of string weight int;
+
+foreach (i: int; def(p.programming_languages[i]))
+	counts << p.programming_languages[i] weight 1;
+«ENDFILE»
+«ENDDEFINE»
