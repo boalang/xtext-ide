@@ -1,4 +1,4 @@
-grammar edu.iastate.cs.boa.Boa hidden(WS, LINE_COMMENT)
+grammar edu.iastate.cs.boa.Boa hidden(WS, SL_COMMENT)
 
 generate boa "http://www.iastate.edu/cs/boa/Boa"
 
@@ -207,11 +207,11 @@ Call:
 	'(' {Call} args=ExpressionList? ')';
 
 Operand:
-	( {StringLiteral}    lit=STRING_LIT
-	| {StringLiteral}    lit=REGEX_LIT
+	( {StringLiteral}    lit=STRING
+	| {StringLiteral}    lit=REGEX
 	| {CharacterLiteral} lit=CHARACTER_LIT
 	| {TimeLiteral}      lit=TIME_LIT
-	| {IntegerLiteral}   lit=INTEGER_LIT
+	| {IntegerLiteral}   lit=INT
 	| {FloatingLiteral}  lit=FLOATING_LIT
 	| Composite
 	| FunctionExpression
@@ -259,7 +259,7 @@ terminal fragment DIGIT:
 terminal fragment NON_ZERO_DIGIT:
 	'1'..'9';
 
-terminal INTEGER_LIT:
+terminal INT:
 	'-'? DECIMAL_NUMERAL
 	| '-'? HEX_NUMERAL
 	| '-'? OCTAL_NUMERAL
@@ -292,13 +292,13 @@ terminal CHARACTER_LIT:
 terminal fragment SINGLE_CHARACTER:
 	!('\'' | '\\' | '\n' | '\r');
 
-terminal REGEX_LIT:
+terminal REGEX:
 	'`' REGEX_CHARACTER* '`';
 
 terminal fragment REGEX_CHARACTER:
 	!('`' | '\n' | '\r');
 
-terminal STRING_LIT:
+terminal STRING:
 	'"' STRING_CHARACTER* '"';
 
 terminal fragment STRING_CHARACTER:
@@ -315,8 +315,8 @@ terminal fragment OCTAL_ESCAPE:
 	| '\\' '0'..'3' '0'..'7' '0'..'7';
 
 terminal TIME_LIT:
-	INTEGER_LIT ('t' | 'T')?
-	| 'T' STRING_LIT;
+	INT ('t' | 'T')?
+	| 'T' STRING;
 
 //
 // identifiers
@@ -333,5 +333,5 @@ terminal WS:
 	// FIXME: for some reason the unicode char gives duplicate error with '\f'
 	(' ' | '\t' | '\r' | '\n' | '\f' /*| '\u000C'*/)+;
 
-terminal LINE_COMMENT:
+terminal SL_COMMENT:
 	'#' !('\r' | '\n')*;
