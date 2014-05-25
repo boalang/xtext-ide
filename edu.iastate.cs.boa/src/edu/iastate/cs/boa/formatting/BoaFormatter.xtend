@@ -19,40 +19,40 @@ import org.eclipse.xtext.Keyword
  */
 class BoaFormatter extends AbstractDeclarativeFormatter {
 	override protected void configureFormatting(FormattingConfig c) {
-	    var g = getGrammarAccess() as BoaGrammarAccess
+		var g = getGrammarAccess() as BoaGrammarAccess
 
 		// add and preserve newlines around comments
-	    c.setLinewrap(0, 1, 2).before(g.SL_COMMENTRule)
-	    c.setLinewrap(1, 1, 2).after(g.SL_COMMENTRule)
+		c.setLinewrap(0, 1, 2).before(g.SL_COMMENTRule)
+		c.setLinewrap(1, 1, 2).after(g.SL_COMMENTRule)
 
-	    c.setLinewrap(1).before(g.variableDeclarationRule)
-	    c.setLinewrap(1).after(g.variableDeclarationRule)
-	    c.setLinewrap(1).before(g.statementRule);
-	    c.setLinewrap(1).after(g.statementRule);
+		c.setLinewrap(1).before(g.variableDeclarationRule)
+		c.setLinewrap(1).after(g.variableDeclarationRule)
+		c.setLinewrap(1).before(g.statementRule);
+		c.setLinewrap(1).after(g.statementRule);
 
-	    for (Keyword k : g.findKeywords("="))
-	      c.setSpace(" ").around(k)
-	    for (Keyword k : g.findKeywords(",")) {
-	      c.setNoSpace().before(k)
-	      c.setSpace(" ").after(k)
-	    }
-	    for (Keyword k : g.findKeywords(";"))
-	      c.setNoSpace().before(k)
+		for (Keyword k : g.findKeywords("="))
+			c.setSpace(" ").around(k)
+		for (Keyword k : g.findKeywords(",")) {
+			c.setNoSpace().before(k)
+			c.setSpace(" ").after(k)
+		}
+		for (Keyword k : g.findKeywords(";"))
+			c.setNoSpace().before(k)
 
-	    for (Keyword k : g.findKeywords("{")) {
-	      c.setLinewrap(0).before(k)
-	      c.setIndentationIncrement().after(k)
-	      c.setLinewrap(1).after(k)
-	    }
-	    for (Keyword k : g.findKeywords("}")) {
-	      c.setIndentationDecrement().before(k)
-	      c.setLinewrap(1).before(k)
-	      c.setLinewrap(1).after(k)
-	    }
+		for (Keyword k : g.findKeywords("{")) {
+			c.setLinewrap(0).before(k)
+			c.setIndentationIncrement().after(k)
+			c.setLinewrap(1).after(k)
+		}
+		for (Keyword k : g.findKeywords("}")) {
+			c.setIndentationDecrement().before(k)
+			c.setLinewrap(1).before(k)
+			c.setLinewrap(1).after(k)
+		}
 
-	    for (Keyword k : g.findKeywords("[", "("))
-	      c.setNoSpace().after(k)
-	    for (Keyword k : g.findKeywords("]", ")"))
-	      c.setNoSpace().before(k)
+		for (Keyword k : g.findKeywords("[", "("))
+			c.setNoSpace().after(k)
+		for (Keyword k : g.findKeywords("]", ")"))
+			c.setNoSpace().before(k)
 	}
 }
