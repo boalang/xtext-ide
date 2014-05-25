@@ -5,8 +5,9 @@ package edu.iastate.cs.boa.formatting
 
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter
 import org.eclipse.xtext.formatting.impl.FormattingConfig
-//import com.google.inject.Inject;
-//import edu.iastate.cs.boa.services.BoaGrammarAccess
+
+import edu.iastate.cs.boa.services.BoaGrammarAccess
+import org.eclipse.xtext.Keyword
 
 /**
  * This class contains custom formatting description.
@@ -17,13 +18,41 @@ import org.eclipse.xtext.formatting.impl.FormattingConfig
  * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
  */
 class BoaFormatter extends AbstractDeclarativeFormatter {
-//	@Inject extension BoaGrammarAccess
-
 	override protected void configureFormatting(FormattingConfig c) {
-// It's usually a good idea to activate the following three statements.
-// They will add and preserve newlines around comments
-//		c.setLinewrap(0, 1, 2).before(SL_COMMENTRule)
-//		c.setLinewrap(0, 1, 2).before(ML_COMMENTRule)
-//		c.setLinewrap(0, 1, 1).after(ML_COMMENTRule)
+	    var g = getGrammarAccess() as BoaGrammarAccess
+
+		// add and preserve newlines around comments
+	    c.setLinewrap(0, 1, 2).before(g.SL_COMMENTRule)
+	    c.setLinewrap(1, 1, 2).after(g.SL_COMMENTRule)
+
+	    c.setLinewrap(1).before(g.variableDeclarationRule)
+	    c.setLinewrap(1).after(g.variableDeclarationRule)
+	    c.setLinewrap(1).before(g.statementRule);
+	    c.setLinewrap(1).after(g.statementRule);
+
+	    for (Keyword k : g.findKeywords("="))
+	      c.setSpace(" ").around(k)
+	    for (Keyword k : g.findKeywords(",")) {
+	      c.setNoSpace().before(k)
+	      c.setSpace(" ").after(k)
+	    }
+	    for (Keyword k : g.findKeywords(";"))
+	      c.setNoSpace().before(k)
+
+	    for (Keyword k : g.findKeywords("{")) {
+	      c.setLinewrap(0).before(k)
+	      c.setIndentationIncrement().after(k)
+	      c.setLinewrap(1).after(k)
+	    }
+	    for (Keyword k : g.findKeywords("}")) {
+	      c.setIndentationDecrement().before(k)
+	      c.setLinewrap(1).before(k)
+	      c.setLinewrap(1).after(k)
+	    }
+
+	    for (Keyword k : g.findKeywords("[", "("))
+	      c.setNoSpace().after(k)
+	    for (Keyword k : g.findKeywords("]", ")"))
+	      c.setNoSpace().before(k)
 	}
 }
