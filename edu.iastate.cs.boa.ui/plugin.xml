@@ -396,12 +396,16 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            category="org.eclipse.xtext.projectwiz"
+            category="edu.iastate.cs.boa.ui"
             class="edu.iastate.cs.boa.ui.BoaExecutableExtensionFactory:edu.iastate.cs.boa.ui.wizard.BoaNewProjectWizard"
             id="edu.iastate.cs.boa.ui.wizard.BoaNewProjectWizard"
             name="Boa Project"
             project="true">
       </wizard>
+      <category
+            id="edu.iastate.cs.boa.ui"
+            name="Boa">
+      </category>
    </extension>
 
 </plugin>
