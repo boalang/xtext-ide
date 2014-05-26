@@ -25,10 +25,10 @@ class BoaFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap(0, 1, 2).before(g.SL_COMMENTRule)
 		c.setLinewrap(1, 1, 2).after(g.SL_COMMENTRule)
 
-		c.setLinewrap(1).before(g.variableDeclarationRule)
+		c.setLinewrap(0, 1, 2).before(g.variableDeclarationRule)
 		c.setLinewrap(1).after(g.variableDeclarationRule)
-		c.setLinewrap(1).before(g.statementRule);
-		c.setLinewrap(1).after(g.statementRule);
+		c.setLinewrap(0, 1, 2).before(g.statementRule)
+		c.setLinewrap(1).after(g.statementRule)
 
 		for (Keyword k : g.findKeywords("="))
 			c.setSpace(" ").around(k)
