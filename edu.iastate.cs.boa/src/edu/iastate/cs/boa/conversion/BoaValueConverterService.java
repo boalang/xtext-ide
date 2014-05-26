@@ -20,8 +20,8 @@ public class BoaValueConverterService extends AbstractDeclarativeValueConverterS
 	@Inject
 	private LONGValueConverter longValueConverter;
 
-	@ValueConverter(rule = "INT")
-	public IValueConverter<Long> INT() {
+	@ValueConverter(rule = "INTEGER_LIT")
+	public IValueConverter<Long> INTEGER_LIT() {
 		return longValueConverter;
 	}
 
