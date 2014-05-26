@@ -259,7 +259,7 @@ terminal fragment DIGIT:
 terminal fragment NON_ZERO_DIGIT:
 	'1'..'9';
 
-terminal INTEGER_LIT returns ecore::EInt:
+terminal INTEGER_LIT returns ecore::ELong:
 	'-'? DECIMAL_NUMERAL
 	| '-'? HEX_NUMERAL
 	| '-'? OCTAL_NUMERAL
