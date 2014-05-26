@@ -26,18 +26,8 @@ Type:
 	| SetType
 	| Identifier);
 
-TypeLink:
-	BasicTypeLink
-	| Type;
-
-BasicTypeLink:
-	target=BasicType;
-
-enum BasicType:
-	int | float | bool | time | string;
-
 TypeDeclaration:
-	'type' name=Identifier '=' type=TypeLink;
+	'type' name=Identifier '=' type=Type;
 
 StaticVariableDeclaration:
 	'static' variable=VariableDeclaration;
@@ -46,7 +36,7 @@ VariableDeclaration:
 	variable=ForVariableDeclaration ';';
 
 Component:
-	(name=Identifier ':')? type=TypeLink;
+	(name=Identifier ':')? type=Type;
 
 TupleType:
 	{TupleType}
@@ -74,10 +64,10 @@ OutputType:
 		(=> 'weight' weight=Component)? (=> 'format' '(' format=ExpressionList ')')?;
 
 FunctionType:
-	'function' {FunctionType} '(' (paramsHead=Parameter (',' paramsTail+=Parameter)*)? ')' (':' return=TypeLink)?;
+	'function' {FunctionType} '(' (paramsHead=Parameter (',' paramsTail+=Parameter)*)? ')' (':' return=Type)?;
 
 Parameter:
-	name=Identifier ':' type=TypeLink;
+	name=Identifier ':' type=Type;
 
 VisitorType:
 	{VisitorType}
@@ -134,7 +124,7 @@ ForExpression:
 	| ForExpressionStatement;
 
 ForVariableDeclaration:
-	name=Identifier ':' (type=TypeLink)? ('=' init=Expression)?;
+	name=Identifier ':' (type=Type)? ('=' init=Expression)?;
 
 ForExpressionStatement:
 	expr=Expression postfix=('++' | '--')?;
@@ -269,7 +259,7 @@ terminal fragment DIGIT:
 terminal fragment NON_ZERO_DIGIT:
 	'1'..'9';
 
-terminal INTEGER_LIT:
+terminal INTEGER_LIT returns ecore::EInt:
 	'-'? DECIMAL_NUMERAL
 	| '-'? HEX_NUMERAL
 	| '-'? OCTAL_NUMERAL
@@ -287,7 +277,7 @@ terminal fragment OCTAL_NUMERAL:
 terminal fragment BINARY_NUMERAL:
 	'0' ('b' | 'B') ('0' | '1')+;
 
-terminal FLOATING_LIT:
+terminal FLOATING_LIT returns ecore::EDouble:
 	'-'? DIGIT+ '.' DIGIT* EXPONENT_PART?
 	| '-'? '.' DIGIT+ EXPONENT_PART?
 	| '-'? DIGIT+ EXPONENT_PART;
@@ -324,7 +314,7 @@ terminal fragment OCTAL_ESCAPE:
 	| '\\' '0'..'7' '0'..'7'
 	| '\\' '0'..'3' '0'..'7' '0'..'7';
 
-terminal TIME_LIT:
+terminal TIME_LIT returns ecore::ELong:
 	INTEGER_LIT ('t' | 'T')?
 	| 'T' STRING_LIT;
 
