@@ -26,8 +26,18 @@ Type:
 	| SetType
 	| Identifier);
 
+TypeLink:
+	BasicTypeLink
+	| Type;
+
+BasicTypeLink:
+	target=BasicType;
+
+enum BasicType:
+	int | float | bool | time | string;
+
 TypeDeclaration:
-	'type' name=Identifier '=' type=Type;
+	'type' name=Identifier '=' type=TypeLink;
 
 StaticVariableDeclaration:
 	'static' variable=VariableDeclaration;
@@ -36,7 +46,7 @@ VariableDeclaration:
 	variable=ForVariableDeclaration ';';
 
 Component:
-	(name=Identifier ':')? type=Type;
+	(name=Identifier ':')? type=TypeLink;
 
 TupleType:
 	{TupleType}
@@ -64,10 +74,10 @@ OutputType:
 		(=> 'weight' weight=Component)? (=> 'format' '(' format=ExpressionList ')')?;
 
 FunctionType:
-	'function' {FunctionType} '(' (paramsHead=Parameter (',' paramsTail+=Parameter)*)? ')' (':' return=Type)?;
+	'function' {FunctionType} '(' (paramsHead=Parameter (',' paramsTail+=Parameter)*)? ')' (':' return=TypeLink)?;
 
 Parameter:
-	name=Identifier ':' type=Type;
+	name=Identifier ':' type=TypeLink;
 
 VisitorType:
 	{VisitorType}
@@ -124,7 +134,7 @@ ForExpression:
 	| ForExpressionStatement;
 
 ForVariableDeclaration:
-	name=Identifier ':' (type=Type)? ('=' init=Expression)?;
+	name=Identifier ':' (type=TypeLink)? ('=' init=Expression)?;
 
 ForExpressionStatement:
 	expr=Expression postfix=('++' | '--')?;
@@ -207,11 +217,11 @@ Call:
 	'(' {Call} args=ExpressionList? ')';
 
 Operand:
-	( {StringLiteral}    lit=STRING
-	| {StringLiteral}    lit=REGEX
+	( {StringLiteral}    lit=STRING_LIT
+	| {StringLiteral}    lit=REGEX_LIT
 	| {CharacterLiteral} lit=CHARACTER_LIT
 	| {TimeLiteral}      lit=TIME_LIT
-	| {IntegerLiteral}   lit=INT
+	| {IntegerLiteral}   lit=INTEGER_LIT
 	| {FloatingLiteral}  lit=FLOATING_LIT
 	| Composite
 	| FunctionExpression
@@ -259,7 +269,7 @@ terminal fragment DIGIT:
 terminal fragment NON_ZERO_DIGIT:
 	'1'..'9';
 
-terminal INT:
+terminal INTEGER_LIT:
 	'-'? DECIMAL_NUMERAL
 	| '-'? HEX_NUMERAL
 	| '-'? OCTAL_NUMERAL
@@ -292,13 +302,13 @@ terminal CHARACTER_LIT:
 terminal fragment SINGLE_CHARACTER:
 	!('\'' | '\\' | '\n' | '\r');
 
-terminal REGEX:
+terminal REGEX_LIT:
 	'`' REGEX_CHARACTER* '`';
 
 terminal fragment REGEX_CHARACTER:
 	!('`' | '\n' | '\r');
 
-terminal STRING:
+terminal STRING_LIT:
 	'"' STRING_CHARACTER* '"';
 
 terminal fragment STRING_CHARACTER:
@@ -315,8 +325,8 @@ terminal fragment OCTAL_ESCAPE:
 	| '\\' '0'..'3' '0'..'7' '0'..'7';
 
 terminal TIME_LIT:
-	INT ('t' | 'T')?
-	| 'T' STRING;
+	INTEGER_LIT ('t' | 'T')?
+	| 'T' STRING_LIT;
 
 //
 // identifiers
