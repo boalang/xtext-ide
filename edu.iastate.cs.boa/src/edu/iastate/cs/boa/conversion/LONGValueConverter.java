@@ -18,7 +18,7 @@ public class LONGValueConverter extends AbstractLexerBasedConverter<Long> {
 			throw new ValueConverterException("Couldn't convert empty string to a long value.", node, null);
 
 		try {
-			if (string.toLowerCase().startsWith("0b"))
+			if (string.length() > 2 && string.charAt(0) == '0' && (string.charAt(1) == 'b' || string.charAt(1) == 'B'))
 				return Long.valueOf(new BigInteger(string.substring(2), 2).longValue());
 
 			return Long.valueOf(Long.decode(string));
