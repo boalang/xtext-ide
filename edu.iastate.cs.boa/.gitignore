@@ -1,4 +1,4 @@
-src-gen/
-xtend-gen/
+src-gen/edu/
+xtend-gen/edu/
 plugin.xml_gen
 bin/
