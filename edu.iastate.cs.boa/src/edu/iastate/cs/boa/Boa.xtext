@@ -33,7 +33,7 @@ StaticVariableDeclaration:
 	'static' variable=VariableDeclaration;
 
 VariableDeclaration:
-	variable=ForVariableDeclaration ';';
+	ForVariableDeclaration ';';
 
 Component:
 	(name=Identifier ':')? type=Type;
@@ -123,7 +123,7 @@ ForExpression:
 	ForVariableDeclaration
 	| ForExpressionStatement;
 
-ForVariableDeclaration:
+ForVariableDeclaration returns VariableDeclaration:
 	name=Identifier ':' (type=Type)? ('=' init=Expression)?;
 
 ForExpressionStatement:
