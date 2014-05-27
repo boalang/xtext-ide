@@ -237,9 +237,8 @@ VisitorExpression:
 StatementExpression:
 	'?' body=Block;
 
-// FIXME: not sure this semantic predicate is right
 Composite:
-	'{' {Composite} (=> el=ExpressionList | p1=Pair (',' p2+=Pair)* | ':')? '}';
+	'{' {Composite} (p1=Pair (',' p2+=Pair)* | el=ExpressionList | ':')? '}';
 
 Pair:
 	lhs=Expression ':' rhs=Expression;
