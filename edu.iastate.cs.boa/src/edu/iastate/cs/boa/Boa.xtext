@@ -27,7 +27,7 @@ Type:
 	| Identifier);
 
 TypeDeclaration:
-	'type' name=Identifier '=' type=Type;
+	'type' name=Identifier '=' aliasedtype=Type;
 
 StaticVariableDeclaration:
 	'static' variable=VariableDeclaration;
@@ -60,7 +60,7 @@ SetType:
 	'set' {SetType} 'of' values=Component;
 
 OutputType:
-	'output' name=Identifier ('(' params=ExpressionList ')')? ('[' indexes+=Component ']')* 'of' type=Component
+	'output' funcname=Identifier ('(' params=ExpressionList ')')? ('[' indexes+=Component ']')* 'of' valtype=Component
 		(=> 'weight' weight=Component)? (=> 'format' '(' format=ExpressionList ')')?;
 
 FunctionType:
@@ -229,7 +229,7 @@ ParenExpression:
 	'(' expr=Expression ')';
 
 FunctionExpression:
-	(type=FunctionType | name=Identifier) body=Block;
+	(type=FunctionType | funcname=Identifier) body=Block;
 
 VisitorExpression:
 	type=VisitorType '{' (stmts+=VisitStatement)+ '}';
