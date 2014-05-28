@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <templates>
-<template enabled="true" name="getsnapshot" id="edu.iastate.cs.boa.getsnapshot"
-	description="visit snapshot"
+<template enabled="true" autoinsert="true"
+	name="getsnapshot" id="edu.iastate.cs.boa.getsnapshot"
+	description="visit a snapshot"
 	context="edu.iastate.cs.boa.Boa.VisitStatement"># only look at the latest snapshot
 before n: CodeRepository -> {
 	snapshot := getsnapshot(n);
@@ -9,4 +10,14 @@ before n: CodeRepository -> {
 		visit(snapshot[i]);
 	stop;
 }</template>
+<template enabled="true" autoinsert="true"
+	name="visit" id="edu.iastate.cs.boa.visit"
+	description="add input visitor"
+	context="edu.iastate.cs.boa.Boa.ProgramStatement">visit(${input}, visitor {
+	${cursor}
+});</template>
+<template enabled="true" autoinsert="true"
+	name="outputvar" id="edu.iastate.cs.boa.outputvar"
+	description="add output variable"
+	context="edu.iastate.cs.boa.Boa.ProgramStatement">${var}: output ${func} of ${type};</template>
 </templates>
