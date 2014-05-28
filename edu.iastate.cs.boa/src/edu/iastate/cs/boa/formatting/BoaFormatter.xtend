@@ -23,12 +23,10 @@ import edu.iastate.cs.boa.services.BoaGrammarAccess
 import org.eclipse.xtext.Keyword
 
 /**
- * This class contains custom formatting description.
+ * This class contains Boa's formatting description.
  *
  * see : http://www.eclipse.org/Xtext/documentation.html#formatting
  * on how and when to use it
- *
- * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
  * 
  * @author rdyer
  */
