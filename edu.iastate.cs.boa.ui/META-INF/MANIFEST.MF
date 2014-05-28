@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iastate.cs.boa.ui
-Bundle-Vendor: My Company
+Bundle-Vendor: Iowa State University
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: edu.iastate.cs.boa.ui; singleton:=true
 Bundle-ActivationPolicy: lazy

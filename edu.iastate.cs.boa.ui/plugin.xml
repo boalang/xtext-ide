@@ -421,20 +421,20 @@
       <command
             name="Submit Job"
             categoryId="edu.iastate.cs.boa.ui.commands.category"
-            id="edu.iastate.cs.boa.ui.commands.sampleCommand">
+            id="edu.iastate.cs.boa.ui.commands.runCommand">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            commandId="edu.iastate.cs.boa.ui.commands.sampleCommand"
-            class="edu.iastate.cs.boa.ui.handlers.BoaPluginHandler">
+            commandId="edu.iastate.cs.boa.ui.commands.runCommand"
+            class="edu.iastate.cs.boa.ui.handlers.SubmitToBoaHandler">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="edu.iastate.cs.boa.ui.commands.sampleCommand"
+            commandId="edu.iastate.cs.boa.ui.commands.runCommand"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+6"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -449,9 +449,9 @@
                mnemonic="M"
                id="edu.iastate.cs.boa.ui.menus.sampleMenu">
             <command
-                  commandId="edu.iastate.cs.boa.ui.commands.sampleCommand"
+                  commandId="edu.iastate.cs.boa.ui.commands.runCommand"
                   mnemonic="S"
-                  id="edu.iastate.cs.boa.ui.menus.sampleCommand">
+                  id="edu.iastate.cs.boa.ui.menus.runCommand">
             </command>
          </menu>
       </menuContribution>
@@ -460,10 +460,10 @@
          <toolbar
                id="edu.iastate.cs.boa.ui.toolbars.sampleToolbar">
             <command
-                  commandId="edu.iastate.cs.boa.ui.commands.sampleCommand"
+                  commandId="edu.iastate.cs.boa.ui.commands.runCommand"
                   icon="icons/sample.gif"
-                  tooltip="Submit Job to Boa"
-                  id="edu.iastate.cs.boa.ui.toolbars.sampleCommand">
+                  tooltip="Run Boa Program"
+                  id="edu.iastate.cs.boa.ui.toolbars.runCommand">
             </command>
          </toolbar>
       </menuContribution>

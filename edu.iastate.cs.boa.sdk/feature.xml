@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="edu.iastate.cs.boa.sdk"
-	label="Boa SDK Feature "
-	version="1.0.0.qualifier">
-	<plugin
-			id="edu.iastate.cs.boa"
-			download-size="0"
-			install-size="0"
-			version="0.0.0"
-			unpack="false"/>
-	<plugin
-			id="edu.iastate.cs.boa.ui"
-			download-size="0"
-			install-size="0"
-			version="0.0.0"
-			unpack="false"/>
+<feature
+      id="edu.iastate.cs.boa.sdk"
+      label="Boa SDK Feature "
+      version="1.0.0.qualifier"
+      provider-name="Iowa State University">
+
+   <plugin
+         id="edu.iastate.cs.boa"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iastate.cs.boa.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
