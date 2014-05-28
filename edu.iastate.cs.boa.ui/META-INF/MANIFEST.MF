@@ -21,8 +21,11 @@ Require-Bundle: edu.iastate.cs.boa;visibility:=reexport,
  org.eclipse.xtend,
  org.eclipse.xpand
 Import-Package: org.apache.log4j,
- org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.emf.common.notify,
+ org.eclipse.jface.text,
+ org.eclipse.ui.texteditor
+Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.7
 Export-Package: edu.iastate.cs.boa.ui.quickfix,
  edu.iastate.cs.boa.ui.contentassist,
  edu.iastate.cs.boa.ui.contentassist.antlr,
