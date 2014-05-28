@@ -415,11 +415,11 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="Sample Category"
+            name="Boa Commands"
             id="edu.iastate.cs.boa.ui.commands.category">
       </category>
       <command
-            name="Submit Job"
+            name="Run Boa Program"
             categoryId="edu.iastate.cs.boa.ui.commands.category"
             id="edu.iastate.cs.boa.ui.commands.runCommand">
       </command>
@@ -446,11 +446,11 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                label="Boa"
-               mnemonic="M"
-               id="edu.iastate.cs.boa.ui.menus.sampleMenu">
+               mnemonic="B"
+               id="edu.iastate.cs.boa.ui.menus.mainMenu">
             <command
                   commandId="edu.iastate.cs.boa.ui.commands.runCommand"
-                  mnemonic="S"
+                  mnemonic="R"
                   id="edu.iastate.cs.boa.ui.menus.runCommand">
             </command>
          </menu>
@@ -458,7 +458,7 @@
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
-               id="edu.iastate.cs.boa.ui.toolbars.sampleToolbar">
+               id="edu.iastate.cs.boa.ui.toolbars.mainToolbar">
             <command
                   commandId="edu.iastate.cs.boa.ui.commands.runCommand"
                   icon="icons/sample.gif"
