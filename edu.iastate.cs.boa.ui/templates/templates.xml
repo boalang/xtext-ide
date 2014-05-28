@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<templates>
+<template enabled="true" name="getsnapshot" id="edu.iastate.cs.boa.getsnapshot"
+	description="visit snapshot"
+	context="edu.iastate.cs.boa.Boa.VisitStatement"># only look at the latest snapshot
+before n: CodeRepository -> {
+	snapshot := getsnapshot(n);
+	foreach (i: int; def(snapshot[i]))
+		visit(snapshot[i]);
+	stop;
+}</template>
+</templates>
