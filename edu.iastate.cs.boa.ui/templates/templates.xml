@@ -4,15 +4,15 @@
 	name="getsnapshot" id="edu.iastate.cs.boa.getsnapshot"
 	description="visit a snapshot"
 	context="edu.iastate.cs.boa.Boa.VisitStatement"># only look at the latest snapshot
-before n: CodeRepository -> {
-	snapshot := getsnapshot(n);
-	foreach (i: int; def(snapshot[i]))
-		visit(snapshot[i]);
+before ${n}: CodeRepository -> {
+	${snapshot} := getsnapshot(${n});
+	foreach (i: int; def(${snapshot}[i]))
+		visit(${snapshot}[i]);
 	stop;
 }</template>
 <template enabled="true" autoinsert="true"
 	name="visit" id="edu.iastate.cs.boa.visit"
-	description="add input visitor"
+	description="visit statement"
 	context="edu.iastate.cs.boa.Boa.ProgramStatement">visit(${input}, visitor {
 	${cursor}
 });</template>
@@ -20,4 +20,46 @@ before n: CodeRepository -> {
 	name="outputvar" id="edu.iastate.cs.boa.outputvar"
 	description="add output variable"
 	context="edu.iastate.cs.boa.Boa.ProgramStatement">${var}: output ${func} of ${type};</template>
+<template enabled="true" autoinsert="true"
+	name="if" id="edu.iastate.cs.boa.if"
+	description="if statement"
+	context="edu.iastate.cs.boa.Boa.ProgramStatement">if (${condition}) {
+	${line_selection}${cursor}
+}</template>
+<template enabled="true" autoinsert="true"
+	name="ifelse" id="edu.iastate.cs.boa.ifelse"
+	description="if else statement"
+	context="edu.iastate.cs.boa.Boa.ProgramStatement">if (${condition}) {
+	${line_selection}${cursor}
+} else {
+	
+}</template>
+<template enabled="true" autoinsert="true"
+	name="foreach" id="edu.iastate.cs.boa.foreach"
+	description="foreach statement"
+	context="edu.iastate.cs.boa.Boa.ProgramStatement">foreach (${i}: int; ${condition}) {
+	${line_selection}${cursor}
+}</template>
+<template enabled="true" autoinsert="true"
+	name="exists" id="edu.iastate.cs.boa.exists"
+	description="exists statement"
+	context="edu.iastate.cs.boa.Boa.ProgramStatement">exists (${i}: int; ${condition}) {
+	${line_selection}${cursor}
+}</template>
+<template enabled="true" autoinsert="true"
+	name="ifall" id="edu.iastate.cs.boa.ifall"
+	description="ifall statement"
+	context="edu.iastate.cs.boa.Boa.ProgramStatement">ifall (${i}: int; ${condition}) {
+	${line_selection}${cursor}
+}</template>
+<template enabled="true" autoinsert="true"
+	name="switch" id="edu.iastate.cs.boa.switch"
+	description="switch statement"
+	context="edu.iastate.cs.boa.Boa.ProgramStatement">switch (${key}) {
+	case ${value}:
+		${cursor}
+		break;
+	default:
+		break;
+}</template>
 </templates>
