@@ -239,7 +239,8 @@ Operand:
 	| {DollarOperand} dol='$'
 	| StatementExpression
 	| ParenExpression
-	| Identifier);
+	| Identifier
+	| {Identifier} lit='format');
 
 UnaryFactor:
 	op=('+' | '-' | '~' | '!' | 'not') operand=Factor;
@@ -263,8 +264,7 @@ Pair:
 	lhs=Expression ':' rhs=Expression;
 
 Identifier:
-	lit=ID
-	| lit='format';
+	lit=ID;
 
 //
 // literals
