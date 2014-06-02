@@ -395,17 +395,25 @@
 
    <extension
          point="org.eclipse.ui.newWizards">
-      <wizard
-            category="edu.iastate.cs.boa.ui"
-            class="edu.iastate.cs.boa.ui.BoaExecutableExtensionFactory:edu.iastate.cs.boa.ui.wizard.BoaNewProjectWizard"
-            id="edu.iastate.cs.boa.ui.wizard.BoaNewProjectWizard"
-            name="Boa Project"
-            project="true">
-      </wizard>
       <category
             id="edu.iastate.cs.boa.ui"
             name="Boa">
       </category>
+      <wizard
+            category="edu.iastate.cs.boa.ui"
+            class="edu.iastate.cs.boa.ui.BoaExecutableExtensionFactory:edu.iastate.cs.boa.ui.wizard.BoaNewProjectWizard"
+            icon="icons/sample.gif"
+            id="edu.iastate.cs.boa.ui.wizard.BoaNewProjectWizard"
+            name="Boa Project"
+            project="true">
+      </wizard>
+      <wizard
+            category="edu.iastate.cs.boa.ui"
+            class="edu.iastate.cs.boa.ui.wizard.BoaNewFileWizard"
+            icon="icons/sample.gif"
+            id="edu.iastate.cs.boa.ui.wizard.BoaNewFileWizard"
+            name="Boa File">
+      </wizard>
    </extension>
    
    
