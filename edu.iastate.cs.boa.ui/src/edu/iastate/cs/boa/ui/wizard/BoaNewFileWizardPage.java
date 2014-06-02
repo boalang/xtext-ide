@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014, Hridesh Rajan, Sambhav Srirama, 
+ *                 and Iowa State University of Science and Technology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package edu.iastate.cs.boa.ui.wizard;
 
 import org.eclipse.core.resources.IContainer;
@@ -24,13 +40,12 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * The "New" wizard page allows setting the container for the new file as well
  * as the file name. The page will only accept file name without the extension
  * OR with the extension that matches the expected one (boa).
+ * 
+ * @author sambhav
  */
-
 public class BoaNewFileWizardPage extends WizardPage {
 	private Text containerText;
-
 	private Text fileText;
-
 	private ISelection selection;
 
 	/**
@@ -40,8 +55,8 @@ public class BoaNewFileWizardPage extends WizardPage {
 	 */
 	public BoaNewFileWizardPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("Multi-page Editor File");
-		setDescription("This wizard creates a new file with *.boa extension that can be opened by a multi-page editor.");
+		setTitle("New Boa File");
+		setDescription("This wizard creates a new Boa file.");
 		this.selection = selection;
 	}
 
@@ -49,8 +64,8 @@ public class BoaNewFileWizardPage extends WizardPage {
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
+		final Composite container = new Composite(parent, SWT.NULL);
+		final GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
@@ -66,7 +81,7 @@ public class BoaNewFileWizardPage extends WizardPage {
 			}
 		});
 
-		Button button = new Button(container, SWT.PUSH);
+		final Button button = new Button(container, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -96,12 +111,12 @@ public class BoaNewFileWizardPage extends WizardPage {
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false
 				&& selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+			final IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.size() > 1)
 				return;
-			Object obj = ssel.getFirstElement();
+			final Object obj = ssel.getFirstElement();
 			if (obj instanceof IResource) {
-				IContainer container;
+				final IContainer container;
 				if (obj instanceof IContainer)
 					container = (IContainer) obj;
 				else
@@ -118,14 +133,13 @@ public class BoaNewFileWizardPage extends WizardPage {
 	 */
 
 	private void handleBrowse() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
+		final ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
 				"Select new file container");
 		if (dialog.open() == ContainerSelectionDialog.OK) {
-			Object[] result = dialog.getResult();
-			if (result.length == 1) {
+			final Object[] result = dialog.getResult();
+			if (result.length == 1)
 				containerText.setText(((Path) result[0]).toString());
-			}
 		}
 	}
 
@@ -134,9 +148,9 @@ public class BoaNewFileWizardPage extends WizardPage {
 	 */
 
 	private void dialogChanged() {
-		IResource container = ResourcesPlugin.getWorkspace().getRoot()
+		final IResource container = ResourcesPlugin.getWorkspace().getRoot()
 				.findMember(new Path(getContainerName()));
-		String fileName = getFileName();
+		final String fileName = getFileName();
 
 		if (getContainerName().length() == 0) {
 			updateStatus("File container must be specified");
@@ -161,7 +175,7 @@ public class BoaNewFileWizardPage extends WizardPage {
 		}
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
-			String ext = fileName.substring(dotLoc + 1);
+			final String ext = fileName.substring(dotLoc + 1);
 			if (ext.equalsIgnoreCase("boa") == false) {
 				updateStatus("File extension must be \"boa\"");
 				return;
@@ -170,7 +184,7 @@ public class BoaNewFileWizardPage extends WizardPage {
 		updateStatus(null);
 	}
 
-	private void updateStatus(String message) {
+	private void updateStatus(final String message) {
 		setErrorMessage(message);
 		setPageComplete(message == null);
 	}

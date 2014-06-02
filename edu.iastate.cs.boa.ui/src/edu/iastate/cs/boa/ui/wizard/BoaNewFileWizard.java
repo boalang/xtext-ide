@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014, Hridesh Rajan, Sambhav Srirama, Robert Dyer,
+ *                 and Iowa State University of Science and Technology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package edu.iastate.cs.boa.ui.wizard;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -6,12 +22,16 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
+
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+
 import java.io.*;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
@@ -24,15 +44,14 @@ import org.eclipse.ui.ide.IDE;
  * "boa". If a sample multi-page editor (also available
  * as a template) is registered for the same extension, it will
  * be able to open it.
+ * 
+ * @author sambhav
+ * @author rdyer
  */
-
 public class BoaNewFileWizard extends Wizard implements INewWizard {
 	private BoaNewFileWizardPage page;
 	private ISelection selection;
 
-	/**
-	 * Constructor for BoaNewFileWizard.
-	 */
 	public BoaNewFileWizard() {
 		super();
 		setNeedsProgressMonitor(true);
@@ -41,7 +60,6 @@ public class BoaNewFileWizard extends Wizard implements INewWizard {
 	/**
 	 * Adding the page to the wizard.
 	 */
-
 	public void addPages() {
 		page = new BoaNewFileWizardPage(selection);
 		addPage(page);
@@ -83,41 +101,33 @@ public class BoaNewFileWizard extends Wizard implements INewWizard {
 	 * file if missing or just replace its contents, and open
 	 * the editor on the newly created file.
 	 */
-
-	private void doFinish(
-		String containerName,
-		String fileName,
-		IProgressMonitor monitor)
-		throws CoreException {
-		// create a sample file
+	private void doFinish(String containerName, String fileName, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Creating " + fileName, 2);
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource resource = root.findMember(new Path(containerName));
-		if (!resource.exists() || !(resource instanceof IContainer)) {
-			throwCoreException("Container \"" + containerName + "\" does not exist.");
-		}
-		IContainer container = (IContainer) resource;
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		final IResource resource = root.findMember(new Path(containerName));
+		if (!resource.exists() || !(resource instanceof IContainer))
+			throw new CoreException(new Status(IStatus.ERROR, "edu.iastate.cs.boa.ui", IStatus.OK, "Container \"" + containerName + "\" does not exist.", null));
+
+		final IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
+		final InputStream stream = openContentStream();
+		if (file.exists())
+			file.setContents(stream, true, true, monitor);
+		else
+			file.create(stream, true, monitor);
 		try {
-			InputStream stream = openContentStream();
-			if (file.exists()) {
-				file.setContents(stream, true, true, monitor);
-			} else {
-				file.create(stream, true, monitor);
-			}
 			stream.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
+			e.printStackTrace();
 		}
+
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				IWorkbenchPage page =
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
-					IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
-				}
+					IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file, true);
+				} catch (PartInitException e) { }
 			}
 		});
 		monitor.worked(1);
@@ -126,22 +136,16 @@ public class BoaNewFileWizard extends Wizard implements INewWizard {
 	/**
 	 * We will initialize file contents with a sample text.
 	 */
-
 	private InputStream openContentStream() {
-		String contents =
+		final String contents =
 			"# Empty Boa file!";
 		return new ByteArrayInputStream(contents.getBytes());
-	}
-
-	private void throwCoreException(String message) throws CoreException {
-		IStatus status =
-			new Status(IStatus.ERROR, "edu.iastate.cs.boa.ui", IStatus.OK, message, null);
-		throw new CoreException(status);
 	}
 
 	/**
 	 * We will accept the selection in the workbench to see if
 	 * we can initialize from it.
+	 * 
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
