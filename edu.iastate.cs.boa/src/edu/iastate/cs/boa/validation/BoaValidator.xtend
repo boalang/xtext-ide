@@ -16,14 +16,13 @@
  */
 package edu.iastate.cs.boa.validation
 
-import org.eclipse.xtext.validation.Check
-import edu.iastate.cs.boa.boa.ReturnStatement
-import org.eclipse.emf.ecore.EObject
 import edu.iastate.cs.boa.boa.Block
-import org.eclipse.xtext.EcoreUtil2
 import edu.iastate.cs.boa.boa.FunctionExpression
+import edu.iastate.cs.boa.boa.ReturnStatement
 
-import org.eclipse.xtext.validation.ComposedChecks
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.validation.Check
 
 /**
  * Custom validation rules.
@@ -32,7 +31,7 @@ import org.eclipse.xtext.validation.ComposedChecks
  * 
  * @author rdyer
  */
-@ComposedChecks(validators = #[typeof(BoaDataTypeValidator)])
+//@ComposedChecks(validators = #[typeof(BoaDataTypeValidator)])
 class BoaValidator extends AbstractBoaValidator {
 	public static val UNREACHABLE_CODE = "edu.iastate.cs.boa.UnreachableCode"
 	public static val MISSING_RETURN = "edu.iastate.cs.boa.MissingReturn"
@@ -43,7 +42,7 @@ class BoaValidator extends AbstractBoaValidator {
 		if (statements.last != ret)
 			// put the error on the statement after the return
 			error("Unreachable code",
-				statements.get(statements.indexOf(ret)+1),
+				statements.get(statements.indexOf(ret) + 1),
 				null, // EStructuralFeature
 				UNREACHABLE_CODE)
 	}
