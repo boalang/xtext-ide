@@ -17,8 +17,10 @@
 package edu.iastate.cs.boa;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.scoping.IScopeProvider;
 
 import edu.iastate.cs.boa.conversion.BoaValueConverterService;
+import edu.iastate.cs.boa.scoping.BoaScopeProvider;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -29,5 +31,10 @@ public class BoaRuntimeModule extends edu.iastate.cs.boa.AbstractBoaRuntimeModul
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
 		return BoaValueConverterService.class;
+	}
+
+	@Override
+	public Class<? extends IScopeProvider> bindIScopeProvider() {
+		return BoaScopeProvider.class;
 	}
 }
