@@ -27,10 +27,12 @@ import java.net.URLEncoder;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -38,34 +40,53 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 /**
+ * Handler for the command to submit Boa code to the server and run it.
+ * 
  * @author sambhav
  * @author rdyer
  */
 public class SubmitToBoaHandler extends AbstractHandler {
-	/**
-	 * the command has been executed, so extract the needed information from the
-	 * application context.
-	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+		final ISecurePreferences secureStorage = SecurePreferencesFactory.getDefault();
+		final ISecurePreferences node = secureStorage.node("/boa/credentials");
 
+		String username = "";
+		String password = "";
+
+		try {
+			username = node.get("username", "");
+			password = node.get("password", "");
+		} catch (StorageException e) {}
+
+		if (!ChangeBoaCredentialsHandler.validCredentials(username, password))
+			ChangeBoaCredentialsHandler.promptUser();
+
+		if (ChangeBoaCredentialsHandler.validCredentials(username, password))
+			submitJob(event, username, password);
+
+		return null;
+	}
+
+	public static void submitJob(final ExecutionEvent event, final String username, final String password) {
 		final IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if (!(part instanceof XtextEditor))
-			return notBoaError(window);
+		if (!(part instanceof XtextEditor)) {
+			showError(event, "Active window does not contain a Boa program.");
+			return;
+		}
 
 		final XtextEditor editor = (XtextEditor) part;
-		if (!editor.getLanguageName().equals("edu.iastate.cs.boa.Boa"))
-			return notBoaError(window);
+		if (!editor.getLanguageName().equals("edu.iastate.cs.boa.Boa")) {
+			showError(event, "Active window does not contain a Boa program.");
+			return;
+		}
 
 		final IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 
-		/*
-		 * Open a connection to the Boa web service to submit a job
-		 */
 		try {
-			final String request = "http://boa.cs.iastate.edu/ide/submit.php?user=" + "tutorial"
-					+ "&pw=" + "icse14tutorial"
-					+ "&source="+ URLEncoder.encode(document.get(), "UTF-8");
+			final String request = "http://boa.cs.iastate.edu/api/submit.php?"
+					+ "user=" + username
+					+ "&pw=" + password
+					+ "&source=" + URLEncoder.encode(document.get(), "UTF-8");
 
 			final HttpURLConnection connect = (HttpURLConnection) new URL(request).openConnection();
 			connect.setRequestMethod("GET");
@@ -83,7 +104,9 @@ public class SubmitToBoaHandler extends AbstractHandler {
 				while ((line = in.readLine()) != null)
 					source += line;
 			} finally {
-				try { in.close(); } catch (final Exception e) {}
+				try {
+					in.close();
+				} catch (final Exception e) {}
 			}
 
 			if (responseCode == 200) {
@@ -91,22 +114,18 @@ public class SubmitToBoaHandler extends AbstractHandler {
 				try {
 					final IWebBrowser browser = PlatformUI.getWorkbench().getBrowserSupport().createBrowser("Boa");
 					browser.openURL(new URL(job));
-				} catch (final PartInitException | MalformedURLException e1) {
-					e1.printStackTrace();
-				}
+				} catch (final PartInitException | MalformedURLException e1) {}
 			} else {
-				MessageDialog.openInformation(window.getShell(), "Boa",
-					"Job submission error (" + responseCode + " " + responseMessage + "): " + source);
+				showError(event, "Job submission error (" + responseCode + " " + responseMessage + "): " + source);
 			}
 		} catch (final IOException e) {
-			e.printStackTrace();
+			showError(event,
+					"Job submission failed: " + e.getMessage() + "\n\n"
+					+ "Verify your Boa username/password are correct and your internet connection is stable.");
 		}
-
-		return null;
 	}
 
-	private Object notBoaError(final IWorkbenchWindow window) {
-		MessageDialog.openError(window.getShell(), "Boa", "Active window does not contain a Boa program.");
-		return null;
+	private static void showError(final ExecutionEvent event, final String msg) {
+		MessageDialog.openError(HandlerUtil.getActiveWorkbenchWindow(event).getShell(), "Boa", msg);
 	}
 }

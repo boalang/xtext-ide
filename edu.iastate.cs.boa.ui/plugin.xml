@@ -431,12 +431,21 @@
             categoryId="edu.iastate.cs.boa.ui.commands.category"
             id="edu.iastate.cs.boa.ui.commands.runCommand">
       </command>
+      <command
+            categoryId="edu.iastate.cs.boa.ui.commands.category"
+            id="edu.iastate.cs.boa.ui.commands.changeBoaCredentials"
+            name="Set Boa Username/Password">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
             commandId="edu.iastate.cs.boa.ui.commands.runCommand"
             class="edu.iastate.cs.boa.ui.handlers.SubmitToBoaHandler">
+      </handler>
+      <handler
+            class="edu.iastate.cs.boa.ui.handlers.ChangeBoaCredentialsHandler"
+            commandId="edu.iastate.cs.boa.ui.commands.changeBoaCredentials">
       </handler>
    </extension>
    <extension
@@ -460,6 +469,11 @@
                   commandId="edu.iastate.cs.boa.ui.commands.runCommand"
                   mnemonic="R"
                   id="edu.iastate.cs.boa.ui.menus.runCommand">
+            </command>
+            <command
+                  commandId="edu.iastate.cs.boa.ui.commands.changeBoaCredentials"
+                  mnemonic="P"
+                  id="edu.iastate.cs.boa.ui.menus.changeBoaCredentials">
             </command>
          </menu>
       </menuContribution>
