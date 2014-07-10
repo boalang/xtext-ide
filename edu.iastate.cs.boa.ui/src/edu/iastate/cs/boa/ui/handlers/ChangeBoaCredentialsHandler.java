@@ -16,6 +16,7 @@
  */
 package edu.iastate.cs.boa.ui.handlers;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -82,7 +83,9 @@ public class ChangeBoaCredentialsHandler extends AbstractHandler {
 					node.put("password", URLEncoder.encode(password, "UTF-8"), true);
 				} catch (final UnsupportedEncodingException e) {}
 			}
-		} catch (final StorageException e) {}
+
+			node.flush();
+		} catch (final StorageException | IOException e) {}
 	}
 
 	public static boolean validUser(final String username) {
