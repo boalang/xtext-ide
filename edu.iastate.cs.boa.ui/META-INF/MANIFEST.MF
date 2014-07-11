@@ -32,3 +32,5 @@ Export-Package: edu.iastate.cs.boa.ui.quickfix,
  edu.iastate.cs.boa.ui.contentassist.antlr,
  edu.iastate.cs.boa.ui.internal
 Bundle-Activator: edu.iastate.cs.boa.ui.internal.BoaActivator
+Bundle-ClassPath: lib/boa-client.jar,
+ .
