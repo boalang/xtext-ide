@@ -17,8 +17,6 @@
 package edu.iastate.cs.boa.ui.handlers;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -59,9 +57,7 @@ public class ChangeBoaCredentialsHandler extends AbstractHandler {
 				return;
 			}
 
-			try {
-				node.put("username", URLEncoder.encode(username, "UTF-8"), false);
-			} catch (final UnsupportedEncodingException e) {}
+			node.put("username", username, false);
 
 			// ask for their Boa password
 			final JPanel panel = new JPanel();
@@ -79,9 +75,7 @@ public class ChangeBoaCredentialsHandler extends AbstractHandler {
 					JOptionPane.showMessageDialog(null, "The password can not be blank.");
 					return;
 				}
-				try {
-					node.put("password", URLEncoder.encode(password, "UTF-8"), true);
-				} catch (final UnsupportedEncodingException e) {}
+				node.put("password", password, true);
 			}
 
 			node.flush();
