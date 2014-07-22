@@ -2,7 +2,7 @@
 <feature
       id="edu.iastate.cs.boa.sdk"
       label="Boa SDK Feature "
-      version="1.0.0.qualifier"
+      version="0.1.0.0"
       provider-name="Iowa State University">
 
    <plugin
