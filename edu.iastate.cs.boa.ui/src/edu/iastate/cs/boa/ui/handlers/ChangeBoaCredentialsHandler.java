@@ -31,7 +31,6 @@ import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 
 public class ChangeBoaCredentialsHandler extends AbstractHandler {
-	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		promptUser();
 		return null;
@@ -79,7 +78,9 @@ public class ChangeBoaCredentialsHandler extends AbstractHandler {
 			}
 
 			node.flush();
-		} catch (final StorageException | IOException e) {}
+		} catch (final StorageException e) {
+		} catch (final IOException e) {
+		}
 	}
 
 	public static boolean validUser(final String username) {

@@ -56,7 +56,7 @@ public class SubmitToBoaHandler extends AbstractHandler {
 		try {
 			username = node.get("username", "");
 			password = node.get("password", "");
-		} catch (StorageException e) {}
+		} catch (final StorageException e) {}
 
 		if (!ChangeBoaCredentialsHandler.validCredentials(username, password))
 			ChangeBoaCredentialsHandler.promptUser();
