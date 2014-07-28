@@ -120,7 +120,6 @@ public class InputSelectionDialog extends Dialog {
 		combo.setVisibleItemCount(choices.length);
 		combo.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		combo.addModifyListener(new ModifyListener() {
-			@Override
 			public void modifyText(ModifyEvent e) {
 				validateInput();
 			}
