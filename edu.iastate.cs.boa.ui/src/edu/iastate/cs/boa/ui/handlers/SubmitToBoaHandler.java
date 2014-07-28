@@ -34,6 +34,9 @@ import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -48,9 +51,6 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
  */
 public class SubmitToBoaHandler extends AbstractHandler {
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		EventQueue.invokeLater(new Runnable() {
-	        @Override
-	        public void run() {
 				final ISecurePreferences secureStorage = SecurePreferencesFactory.getDefault();
 				final ISecurePreferences node = secureStorage.node("/boa/credentials");
 		
@@ -67,14 +67,15 @@ public class SubmitToBoaHandler extends AbstractHandler {
 		
 				if (ChangeBoaCredentialsHandler.validCredentials(username, password))
 					submitJob(event, username, password);
-	        }
-		});
 
 		return null;
 	}
 
 	public static void submitJob(final ExecutionEvent event, final String username, final String password) {
-		final IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+		final IWorkbenchPage page = window.getActivePage();
+		final IEditorPart part = page.getActiveEditor();
 		if (!(part instanceof XtextEditor)) {
 			showError(event, "Active window does not contain a Boa program.");
 			return;
