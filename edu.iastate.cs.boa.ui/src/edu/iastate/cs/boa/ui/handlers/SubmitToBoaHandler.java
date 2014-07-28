@@ -16,7 +16,6 @@
  */
 package edu.iastate.cs.boa.ui.handlers;
 
-import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -51,22 +50,22 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
  */
 public class SubmitToBoaHandler extends AbstractHandler {
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-				final ISecurePreferences secureStorage = SecurePreferencesFactory.getDefault();
-				final ISecurePreferences node = secureStorage.node("/boa/credentials");
-		
-				String username = "";
-				String password = "";
-		
-				try {
-					username = node.get("username", "");
-					password = node.get("password", "");
-				} catch (final StorageException e) {}
-		
-				if (!ChangeBoaCredentialsHandler.validCredentials(username, password))
-					ChangeBoaCredentialsHandler.promptUser();
-		
-				if (ChangeBoaCredentialsHandler.validCredentials(username, password))
-					submitJob(event, username, password);
+		final ISecurePreferences secureStorage = SecurePreferencesFactory.getDefault();
+		final ISecurePreferences node = secureStorage.node("/boa/credentials");
+
+		String username = "";
+		String password = "";
+
+		try {
+			username = node.get("username", "");
+			password = node.get("password", "");
+		} catch (final StorageException e) {}
+
+		if (!ChangeBoaCredentialsHandler.validCredentials(username, password))
+			ChangeBoaCredentialsHandler.promptUser();
+
+		if (ChangeBoaCredentialsHandler.validCredentials(username, password))
+			submitJob(event, username, password);
 
 		return null;
 	}
