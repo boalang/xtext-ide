@@ -16,13 +16,7 @@
  */
 package edu.iastate.cs.boa.ui.handlers;
 
-import java.awt.EventQueue;
 import java.io.IOException;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -30,62 +24,71 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.*;
+import org.eclipse.ui.handlers.HandlerUtil;
+
+import edu.iastate.cs.boa.ui.dialogs.PasswordDialog;
 
 public class ChangeBoaCredentialsHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		EventQueue.invokeLater(new Runnable() {
-	        @Override
-	        public void run() {
-	        	promptUser();
-	        }
-		});
+    	promptUser(event);
 		return null;
 	}
 
-	public static void promptUser() {
+	public static void promptUser(final ExecutionEvent event) {
 		final ISecurePreferences secureStorage = SecurePreferencesFactory.getDefault();
 		final ISecurePreferences node = secureStorage.node("/boa/credentials");
 
 		try {
 			// ask for their Boa username
-			final String username = JOptionPane.showInputDialog(null,
-					"Enter your Boa username:", "Boa Username",
-					JOptionPane.PLAIN_MESSAGE);
-
-			// they hit cancel
-			if (username == null)
+			final InputDialog dlg = new InputDialog(HandlerUtil.getActiveWorkbenchWindow(event).getShell(),
+				"Boa", "Enter your Boa username:", "", new IInputValidator() {
+					public String isValid(final String newText) {
+						int len = newText.length();
+						if (len < 1) return "Invalid username";
+						return null;
+					}
+				});
+			if (dlg.open() == Window.CANCEL)
 				return;
 
+			final String username = dlg.getValue();
+
 			if (!validUser(username)) {
-	        	JOptionPane.showMessageDialog(null, "Username can not be blank.");
-				promptUser();
+	    		MessageDialog.openError(HandlerUtil.getActiveWorkbenchWindow(event).getShell(), "Boa", "Username can not be blank.");
+				promptUser(event);
 				return;
 			}
 
 			node.put("username", username, false);
 
 			// ask for their Boa password
-			final JPanel panel = new JPanel();
-			final JPasswordField pass = new JPasswordField(10);
-			panel.add(new JLabel("Enter your Boa password:\n"));
-			panel.add(pass);
-			final String[] options = new String[] { "OK", "Cancel" };
-			final int option = JOptionPane.showOptionDialog(null, panel,
-					"Boa Password", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			final InputDialog passwordDlg = new PasswordDialog(HandlerUtil.getActiveWorkbenchWindow(event).getShell(),
+					"Boa", "Enter your Boa password:", "", new IInputValidator() {
+						public String isValid(final String newText) {
+							int len = newText.length();
+							if (len < 1) return "Invalid password";
+							return null;
+						}
+					});
+			if (passwordDlg.open() == Window.CANCEL)
+				return;
 
-			if (option == 0) {
-				final String password = new String(pass.getPassword());
-				if (!validPassword(password)) {
-					JOptionPane.showMessageDialog(null, "The password can not be blank.");
-					return;
-				}
-				node.put("password", password, true);
+			final String password = new String(passwordDlg.getValue());
+			if (!validPassword(password)) {
+	    		MessageDialog.openError(HandlerUtil.getActiveWorkbenchWindow(event).getShell(), "Boa", "The password can not be blank.");
+				return;
 			}
+			node.put("password", password, true);
 
 			node.flush();
 		} catch (final StorageException e) {
+			e.printStackTrace();
 		} catch (final IOException e) {
+			e.printStackTrace();
 		}
 	}
 
