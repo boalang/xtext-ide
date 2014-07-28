@@ -117,8 +117,9 @@ public class SubmitToBoaHandler extends AbstractHandler {
 
 				try {
 					final IWebBrowser browser = PlatformUI.getWorkbench().getBrowserSupport().createBrowser("Boa");
-					browser.openURL(new URL("http://boa.cs.iastate.edu/boa/?q=boa/job/public/" + job.getId()));
-//					browser.openURL(job.getPublicUrl());
+					// FIXME the client API doesnt support the call yet, so hard code a URL for now
+//					browser.openURL(job.getUrl());
+					browser.openURL(new URL("http://boa.cs.iastate.edu/boa/?q=boa/job/" + job.getId()));
 				} catch (final PartInitException e) {
 					e.printStackTrace();
 				} catch (final MalformedURLException e) {
@@ -149,14 +150,29 @@ public class SubmitToBoaHandler extends AbstractHandler {
 			List<InputHandle> list;
 
  			try {
-				list = (List<InputHandle>)bytesToObj(cache.getByteArray("list", null));
- 				if (list == null) return null;
+ 				final byte[] bytes = cache.getByteArray("list", null);
+ 				if (bytes == null) {
+ 					showError(event,
+ 							"Job submission failed: Unable to obtain list of input datasets\n\n"
+ 							+ "Verify your Boa username/password are correct and your internet connection is stable.");
+ 					return null;
+ 				}
+				list = (List<InputHandle>)bytesToObj(bytes);
+ 				if (list == null) {
+ 					showError(event,
+ 							"Job submission failed: Unable to obtain list of input datasets\n\n"
+ 							+ "Verify your Boa username/password are correct and your internet connection is stable.");
+ 					return null;
+ 				}
 
  				items = new String[list.size()];
  				for (int i = 0; i < list.size(); i++)
  					items[i] = list.get(i).getName();
 			} catch (final StorageException e) {
 				e.printStackTrace();
+				showError(event,
+						"Job submission failed: Unable to obtain list of input datasets: " + e.getLocalizedMessage() + "\n\n"
+						+ "Verify your Boa username/password are correct and your internet connection is stable.");
 				return null;
  			}
 
