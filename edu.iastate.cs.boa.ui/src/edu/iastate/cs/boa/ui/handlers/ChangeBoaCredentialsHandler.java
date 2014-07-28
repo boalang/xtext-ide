@@ -16,6 +16,7 @@
  */
 package edu.iastate.cs.boa.ui.handlers;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 
 import javax.swing.JLabel;
@@ -32,7 +33,12 @@ import org.eclipse.equinox.security.storage.StorageException;
 
 public class ChangeBoaCredentialsHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		promptUser();
+		EventQueue.invokeLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	promptUser();
+	        }
+		});
 		return null;
 	}
 
@@ -51,7 +57,7 @@ public class ChangeBoaCredentialsHandler extends AbstractHandler {
 				return;
 
 			if (!validUser(username)) {
-				JOptionPane.showMessageDialog(null, "Username can not be blank.");
+	        	JOptionPane.showMessageDialog(null, "Username can not be blank.");
 				promptUser();
 				return;
 			}
