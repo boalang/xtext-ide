@@ -9,6 +9,8 @@ This is Boa's XText-based IDE, which is a plugin for Eclipse.
 
 [http://www.eclipse.org/Xtext/download.html](http://www.eclipse.org/Xtext/download.html)
 
+After checking out this project, make sure you run setup.sh to create some necessary (empty) directories!  Otherwise Eclipse will refuse to build the projects.
+
 ### Project Organization ###
 
 This repository contains 4 Eclipse projects:
