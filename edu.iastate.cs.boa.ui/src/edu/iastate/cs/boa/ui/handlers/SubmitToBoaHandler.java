@@ -19,7 +19,6 @@ package edu.iastate.cs.boa.ui.handlers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -54,7 +53,6 @@ public class SubmitToBoaHandler extends AbstractHandler {
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISecurePreferences secureStorage = SecurePreferencesFactory.getDefault();
 		final ISecurePreferences node = secureStorage.node("/boa/credentials");
-		final ISecurePreferences cache = secureStorage.node("/boa/datasets");
 
 		String username = null;
 		String password = null;
@@ -71,7 +69,7 @@ public class SubmitToBoaHandler extends AbstractHandler {
 			final BoaClient client = new BoaClient();
 			try {
 				client.login(username, password);
-				submitJob(event, client, cache);
+				submitJob(event, client);
 			} catch (final LoginException e) {
 				showError(event, e.getLocalizedMessage());
 			} finally {
@@ -84,7 +82,7 @@ public class SubmitToBoaHandler extends AbstractHandler {
 		return null;
 	}
 
-	public static void submitJob(final ExecutionEvent event, final BoaClient client, final ISecurePreferences cache) {
+	public static void submitJob(final ExecutionEvent event, final BoaClient client) {
 		final IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		if (!(part instanceof XtextEditor)) {
 			showError(event, "Active window does not contain a Boa program.");
@@ -99,7 +97,7 @@ public class SubmitToBoaHandler extends AbstractHandler {
 
 		final IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 
-		final InputHandle datasetSelected = promptDatasetSelection(event, client, cache);
+		final InputHandle datasetSelected = promptDatasetSelection(event, client);
 
 		if (datasetSelected != null) {
 			try {
@@ -131,36 +129,22 @@ public class SubmitToBoaHandler extends AbstractHandler {
 	 *
 	 * @param event
 	 * @param client
-	 * @param cache
 	 */
-	public static InputHandle promptDatasetSelection(final ExecutionEvent event, final BoaClient client, final ISecurePreferences cache) {
-		String[] items = new String[0];
-		List<InputHandle> list = null;
-
+	public static InputHandle promptDatasetSelection(final ExecutionEvent event, final BoaClient client) {
 		try {
-			list = client.getDatasets();
-			items = new String[list.size()];
-			for (int i = 0; i < list.size(); i++)
-				items[i] = list.get(i).getName();
-		} catch (BoaException e) {
+			final String[] items = client.getDatasetNames();
+
+			final InputSelectionDialog dlg = new InputSelectionDialog(HandlerUtil.getActiveWorkbenchWindow(event).getShell(), "Boa", "Select the input dataset to query:", items, items[0], null);
+			if (dlg.open() == Window.CANCEL)
+				return null;
+
+			return client.getDataset(dlg.getValue());
+		} catch (final BoaException e) {
 			e.printStackTrace();
 			showError(event,
 					"Job submission failed: Unable to obtain list of input datasets: " + e.getLocalizedMessage() + "\n\n"
 					+ "Verify your Boa username/password are correct and your internet connection is stable.");
-			return null;
 		}
-
-		/*
-		 * Display the dataset choices
-		 */
-		final InputSelectionDialog dlg = new InputSelectionDialog(HandlerUtil.getActiveWorkbenchWindow(event).getShell(), "Boa", "Select the input dataset to query:", items, items[0], null);
-		if (dlg.open() == Window.CANCEL)
-			return null;
-
-		final String val = dlg.getValue();
-		for (final InputHandle h : list)
-			if (h.getName().equals(val))
-				return h;
 
 		return null;
 	}
