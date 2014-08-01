@@ -17,8 +17,12 @@
  */
 package edu.iastate.cs.boa.validation
 
+import edu.iastate.cs.boa.boa.Block
+import edu.iastate.cs.boa.boa.BreakStatement
+import edu.iastate.cs.boa.boa.ContinueStatement
 import edu.iastate.cs.boa.boa.FunctionExpression
 import edu.iastate.cs.boa.boa.ReturnStatement
+import edu.iastate.cs.boa.boa.StopStatement
 
 import org.eclipse.xtext.validation.Check
 
@@ -30,26 +34,28 @@ class BoaFunctionValidator extends BoaValidator {
 	public static val MISSING_RETURN = "edu.iastate.cs.boa.MissingReturn"
 
 	@Check
-	def void checkNoStatementAfterReturn(ReturnStatement ret) {
-		val statements = containingBlock(ret).stmts
-		if (statements != null && statements.last != null && statements.last != ret)
-			// put the error on the statement after the return
+	def void checkNoUnreachable(Block b) {
+		val statements = b.stmts
+		val exit = statements.findFirst[s | s instanceof ReturnStatement || s instanceof BreakStatement || s instanceof ContinueStatement || s instanceof StopStatement]
+
+		if (exit != null && statements.last != null && statements.last != exit)
+			// put the error on the first unreachable statement
 			error("Unreachable code",
-				statements.get(statements.indexOf(ret) + 1),
+				statements.get(statements.indexOf(exit) + 1),
 				null, // EStructuralFeature
 				UNREACHABLE_CODE)
 	}
 
 	@Check
-	def void checkNoMissingReturn(FunctionExpression ret) {
-		if (ret.type.^return == null)
+	def void checkNoMissingReturn(FunctionExpression func) {
+		if (func.type.^return == null)
 			return
 
-		val statements = ret.body.stmts
+		val statements = func.body.stmts
 		if (statements == null || statements.last == null || !(statements.last instanceof ReturnStatement))
 			// put the error on the statement after the return
 			error("Return statement missing",
-				ret.type,
+				func.type,
 				null, // EStructuralFeature
 				MISSING_RETURN)
 	}
