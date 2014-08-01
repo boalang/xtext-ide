@@ -2,21 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iastate.cs.boa
 Bundle-Vendor: Iowa State University
-Bundle-Version: 0.1.0.7
+Bundle-Version: 0.1.0.9
 Bundle-SymbolicName: edu.iastate.cs.boa; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.xtext;visibility:=reexport,
- org.eclipse.xtext.xbase;resolution:=optional;visibility:=reexport,
- org.eclipse.xtext.generator;resolution:=optional,
+Require-Bundle: org.eclipse.xtext;bundle-version="2.6.2";visibility:=reexport,
+ org.eclipse.xtext.xbase;bundle-version="2.6.2";resolution:=optional;visibility:=reexport,
+ org.eclipse.xtext.generator;bundle-version="2.6.2";resolution:=optional,
  org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional,
  org.eclipse.emf.codegen.ecore;resolution:=optional,
  org.eclipse.emf.mwe.utils;resolution:=optional,
  org.eclipse.emf.mwe2.launch;resolution:=optional,
- org.eclipse.xtext.util,
+ org.eclipse.xtext.util;bundle-version="2.6.2",
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
  org.antlr.runtime,
- org.eclipse.xtext.common.types
+ org.eclipse.xtext.common.types;bundle-version="2.6.2"
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
