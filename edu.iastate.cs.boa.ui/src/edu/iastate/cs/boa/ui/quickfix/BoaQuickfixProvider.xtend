@@ -41,12 +41,13 @@ class BoaQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQu
 			parent.type.setReturn(null)
 		]
 	}
-	@Fix(BoaFunctionValidator::UNREACHABLE_CODE)
-	def removeStatement(Issue issue, IssueResolutionAcceptor acceptor) {
-		// TODO change icon to a 'remove' icon
-		acceptor.accept(issue, 'Remove', 'Remove', null) [
-			element, context |
-			// TODO implement - the fix is to remove all statements after the first reachable return in the block
-		]
-	}
+
+//	@Fix(BoaFunctionValidator::UNREACHABLE_CODE)
+//	def removeStatement(Issue issue, IssueResolutionAcceptor acceptor) {
+//		// TODO change icon to a 'remove' icon
+//		acceptor.accept(issue, 'Remove', 'Remove', null) [
+//			element, context |
+//			// TODO implement - the fix is to remove all statements after the first reachable return in the block
+//		]
+//	}
 }
