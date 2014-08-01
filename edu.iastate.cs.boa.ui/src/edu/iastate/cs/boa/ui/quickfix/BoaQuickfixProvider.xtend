@@ -1,6 +1,7 @@
 /*
  * Copyright 2014, Hridesh Rajan, Robert Dyer, 
- *                 and Iowa State University of Science and Technology
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +17,12 @@
  */
 package edu.iastate.cs.boa.ui.quickfix
 
-//import org.eclipse.xtext.ui.editor.quickfix.Fix
-//import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
-//import org.eclipse.xtext.validation.Issue
+import org.eclipse.xtext.ui.editor.quickfix.Fix
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
+import org.eclipse.xtext.validation.Issue
+
+import edu.iastate.cs.boa.validation.BoaFunctionValidator
+import edu.iastate.cs.boa.boa.FunctionExpression
 
 /**
  * Custom quickfixes.
@@ -28,13 +32,21 @@ package edu.iastate.cs.boa.ui.quickfix
  * @author rdyer
  */
 class BoaQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
-//	@Fix(MyDslValidator::INVALID_NAME)
-//	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
-//		acceptor.accept(issue, 'Capitalize name', 'Capitalize the name.', 'upcase.png') [
-//			context |
-//			val xtextDocument = context.xtextDocument
-//			val firstLetter = xtextDocument.get(issue.offset, 1)
-//			xtextDocument.replace(issue.offset, 1, firstLetter.toUpperCase)
-//		]
-//	}
+	@Fix(BoaFunctionValidator::MISSING_RETURN)
+	def changeReturnToVoid(Issue issue, IssueResolutionAcceptor acceptor) {
+		// FIXME change icon to a 'remove' icon
+		acceptor.accept(issue, 'Remove return type', 'Remove return type', null) [
+			element, context |
+			val parent = element.eContainer as FunctionExpression
+			parent.type.setReturn(null)
+		]
+	}
+	@Fix(BoaFunctionValidator::UNREACHABLE_CODE)
+	def removeStatement(Issue issue, IssueResolutionAcceptor acceptor) {
+		// TODO change icon to a 'remove' icon
+		acceptor.accept(issue, 'Remove', 'Remove', null) [
+			element, context |
+			// TODO implement - the fix is to remove all statements after the first reachable return in the block
+		]
+	}
 }
