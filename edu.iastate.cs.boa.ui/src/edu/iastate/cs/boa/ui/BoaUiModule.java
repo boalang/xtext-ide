@@ -39,4 +39,8 @@ public class BoaUiModule extends edu.iastate.cs.boa.ui.AbstractBoaUiModule {
 	public Class<? extends org.eclipse.xtext.ui.wizard.IProjectCreator> bindIProjectCreator() {
 		return edu.iastate.cs.boa.ui.wizard.BoaCustomProjectCreator.class;
 	}
+
+	public com.google.inject.Provider<org.eclipse.xtext.resource.containers.IAllContainersState> provideIAllContainersState() {
+		return org.eclipse.xtext.ui.shared.Access.getWorkspaceProjectsState();
+	}
 }
