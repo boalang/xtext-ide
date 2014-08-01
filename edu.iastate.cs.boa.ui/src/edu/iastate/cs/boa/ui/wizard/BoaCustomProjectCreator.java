@@ -36,13 +36,14 @@ import org.eclipse.xtext.ui.XtextProjectHelper;
 public class BoaCustomProjectCreator extends BoaProjectCreator {
 	@Override
 	protected String[] getBuilders() {
-		// we want the Xtext builder by default
-		return new String[] { XtextProjectHelper.BUILDER_ID };
+		return new String[] {
+		};
 	}
 
 	protected String[] getProjectNatures() {
-		// we want the Xtext nature by default
-		return new String[] { XtextProjectHelper.NATURE_ID };
+		return new String[] {
+			XtextProjectHelper.NATURE_ID // we want the Xtext nature by default
+		};
 	}
 
 	@Override
