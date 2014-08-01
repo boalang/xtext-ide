@@ -52,7 +52,9 @@ class BoaFunctionValidator extends BoaValidator {
 			return
 
 		val statements = func.body.stmts
-		if (statements == null || statements.last == null || !(statements.last instanceof ReturnStatement))
+		val ret = statements.findFirst[s | s instanceof ReturnStatement]
+
+		if (ret == null)
 			// put the error on the statement after the return
 			error("Return statement missing",
 				func.type,
