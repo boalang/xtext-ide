@@ -1,6 +1,7 @@
 /*
  * Copyright 2014, Hridesh Rajan, Robert Dyer, 
- *                 and Iowa State University of Science and Technology
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +18,10 @@
 package edu.iastate.cs.boa.validation
 
 import edu.iastate.cs.boa.boa.Block
-import edu.iastate.cs.boa.boa.FunctionExpression
-import edu.iastate.cs.boa.boa.ReturnStatement
 
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
-import org.eclipse.xtext.validation.Check
+import org.eclipse.xtext.validation.ComposedChecks
 
 /**
  * Custom validation rules.
@@ -31,36 +30,8 @@ import org.eclipse.xtext.validation.Check
  * 
  * @author rdyer
  */
-//@ComposedChecks(validators = #[typeof(BoaDataTypeValidator)])
+@ComposedChecks(validators = #[typeof(BoaFunctionValidator)])
 class BoaValidator extends AbstractBoaValidator {
-	public static val UNREACHABLE_CODE = "edu.iastate.cs.boa.UnreachableCode"
-	public static val MISSING_RETURN = "edu.iastate.cs.boa.MissingReturn"
-
-	@Check
-	def void checkNoStatementAfterReturn(ReturnStatement ret) {
-		val statements = containingBlock(ret).stmts
-		if (statements.last != ret)
-			// put the error on the statement after the return
-			error("Unreachable code",
-				statements.get(statements.indexOf(ret) + 1),
-				null, // EStructuralFeature
-				UNREACHABLE_CODE)
-	}
-
-	@Check
-	def void checkNoMissingReturn(FunctionExpression ret) {
-		if (ret.type.^return == null)
-			return
-
-		val statements = ret.body.stmts
-		if (!(statements.last instanceof ReturnStatement))
-			// put the error on the statement after the return
-			error("Return statement missing",
-				statements.last,
-				null, // EStructuralFeature
-				MISSING_RETURN)
-	}
-
 	def static containingBlock(EObject e) {
 		EcoreUtil2.getContainerOfType(e, typeof(Block))
 	}
