@@ -34,8 +34,7 @@ import edu.iastate.cs.boa.boa.FunctionExpression
 class BoaQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
 	@Fix(BoaFunctionValidator::MISSING_RETURN)
 	def changeReturnToVoid(Issue issue, IssueResolutionAcceptor acceptor) {
-		// FIXME change icon to a 'remove' icon
-		acceptor.accept(issue, 'Remove return type', 'Remove return type', null) [
+		acceptor.accept(issue, 'Remove return type', 'Remove return type', 'remove.gif') [
 			element, context |
 			val parent = element.eContainer as FunctionExpression
 			parent.type.setReturn(null)
