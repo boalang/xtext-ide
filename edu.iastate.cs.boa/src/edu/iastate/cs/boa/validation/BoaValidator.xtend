@@ -17,10 +17,6 @@
  */
 package edu.iastate.cs.boa.validation
 
-import edu.iastate.cs.boa.boa.Block
-
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.ComposedChecks
 
 /**
@@ -32,7 +28,4 @@ import org.eclipse.xtext.validation.ComposedChecks
  */
 @ComposedChecks(validators = #[typeof(BoaFunctionValidator)])
 class BoaValidator extends AbstractBoaValidator {
-	def static containingBlock(EObject e) {
-		EcoreUtil2.getContainerOfType(e, typeof(Block))
-	}
 }

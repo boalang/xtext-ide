@@ -23,6 +23,7 @@ import org.eclipse.xtext.validation.Issue
 
 import edu.iastate.cs.boa.validation.BoaFunctionValidator
 import edu.iastate.cs.boa.boa.FunctionExpression
+import edu.iastate.cs.boa.boa.Block
 
 /**
  * Custom quickfixes.
@@ -41,12 +42,15 @@ class BoaQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQu
 		]
 	}
 
-//	@Fix(BoaFunctionValidator::UNREACHABLE_CODE)
-//	def removeStatement(Issue issue, IssueResolutionAcceptor acceptor) {
-//		// TODO change icon to a 'remove' icon
-//		acceptor.accept(issue, 'Remove', 'Remove', null) [
-//			element, context |
-//			// TODO implement - the fix is to remove all statements after the first reachable return in the block
-//		]
-//	}
+	@Fix(BoaFunctionValidator::UNREACHABLE_CODE)
+	def removeStatement(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, 'Remove', 'Remove', 'remove.gif') [
+			element, context |
+			var b = element.eContainer as Block
+			var statements = b.stmts
+			var start = statements.indexOf(element)
+			while (statements.length > start)
+				statements.remove(start)
+		]
+	}
 }
