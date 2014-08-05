@@ -37,7 +37,7 @@ See: Any jobs output (http://boa.cs.iastate.edu/boa/index.php?q=boa/job/public/5
 
 ## Support Scoping / Type Linking ##
 
-**Effort: High**
+*Effort: High*
 
 There is no scope provider for Boa.  This is needed in order to properly
 support many other features, including the type linking.
@@ -68,7 +68,7 @@ See: /edu.iastate.cs.boa.ui/src/edu/iastate/cs/boa/ui/quickfix/BoaQuickfixProvid
 
 ## Better Content Assist ##
 
-Effort: High
+*Effort: High*
 
 Support better auto-completion suggestions.  The defaults are basically just
 templates (which we need more of) and the next available parser token.
@@ -88,7 +88,7 @@ See: /edu.iastate.cs.boa.ui/templates/templates.xml
 
 ## Better Outlining/Labeling ##
 
-Effort: Medium
+*Effort: Medium*
 
 The default outline/labels for the AST are pretty useless.
 
@@ -114,7 +114,7 @@ up each time, as the configuration would hard code an input.
 
 ## Use XText as a Generator ##
 
-Effort: Very High
+*Effort: Very High*
 
 Right now we have a custom compiler.  Eventually we want to be able to compile
 locally (not on the server) so we will want a generator that produces the
@@ -134,7 +134,7 @@ This will help ease debugging/testing.
 
 ## Include a Small/Example Dataset ##
 
-Effort: Low
+*Effort: Low*
 
 We want a small dataset included, so that Boa programs can run locally on it
 and ease debugging and testing.
