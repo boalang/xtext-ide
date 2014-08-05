@@ -24,8 +24,8 @@ This repository contains 4 Eclipse projects:
 * edu.iastate.cs.boa.tests
 * edu.iastate.cs.boa.ui
 
-Each project contains a 'src' sub-dir, which contains files you *can* modify
-and src-gen, xtend-gen sub-dirs that you should *not* modify (they are
+Each project contains a 'src' sub-dir, which contains files you **can** modify
+and src-gen, xtend-gen sub-dirs that you **should not** modify (they are
 generated)!
 
 Important files:
