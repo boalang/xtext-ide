@@ -19,7 +19,9 @@ projects.
 
 This repository contains 4 Eclipse projects:
 
-* edu.iastate.cs.boa edu.iastate.cs.boa.sdk edu.iastate.cs.boa.tests
+* edu.iastate.cs.boa
+* edu.iastate.cs.boa.sdk
+* edu.iastate.cs.boa.tests
 * edu.iastate.cs.boa.ui
 
 Each project contains a 'src' sub-dir, which contains files you *can* modify
