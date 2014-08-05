@@ -37,7 +37,7 @@ See: Any jobs output (http://boa.cs.iastate.edu/boa/index.php?q=boa/job/public/5
 
 ## Support Scoping / Type Linking ##
 
-Effort: High
+**Effort: High**
 
 There is no scope provider for Boa.  This is needed in order to properly
 support many other features, including the type linking.
@@ -47,7 +47,7 @@ See: /edu.iastate.cs.boa/src/edu/iastate/cs/boa/scoping/BoaScopeProvider.xtend
 
 ## More Validators ##
 
-Effort: Medium
+*Effort: Medium*
 
 Right now there are only a couple example validators.  Any type check or
 semantic error needs validated.
@@ -57,7 +57,7 @@ See: /edu.iastate.cs.boa/src/edu/iastate/cs/boa/validation/BoaFunctionValidator.
 
 ## More Quick Fixes ##
 
-Effort: Low
+*Effort: Low*
 
 We have a few example quick fixes.  More are needed.  This depends on the
 validator code being implemented, as the errors generated there are what we
@@ -78,7 +78,7 @@ See: /edu.iastate.cs.boa.ui/src/edu/iastate/cs/boa/ui/contentassist/BoaProposalP
 
 ## More Templates ##
 
-Effort: Low
+*Effort: Low*
 
 Support more/better templates.  Also the template editor has way too many
 categories right now.
@@ -99,7 +99,7 @@ See: /edu.iastate.cs.boa.ui/src/edu/iastate/cs/boa/ui/outline/BoaOutlineTreeProv
 
 ## Boa Launch Configuration ##
 
-Effort: Medium
+*Effort: Medium*
 
 Right now we have a custom Boa menu with a 'run' under it (and a button linked
 to this action).  Instead, we should create an Eclipse launcher for Boa.  This
@@ -125,7 +125,7 @@ See: /edu.iastate.cs.boa/src/edu/iastate/cs/boa/generator/BoaGenerator.xtend
 
 ## Package Hadoop ##
 
-Effort: Medium
+*Effort: Medium*
 
 We want to include a pre-configured (as pseudo-distributed) Hadoop install so
 that the locally generated Boa programs can run on a small example dataset.
