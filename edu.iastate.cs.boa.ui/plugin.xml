@@ -436,6 +436,11 @@
             id="edu.iastate.cs.boa.ui.commands.changeBoaCredentials"
             name="Set Boa Username/Password">
       </command>
+      <command
+            categoryId="edu.iastate.cs.boa.ui.commands.category"
+            id="edu.iastate.cs.boa.ui.commands.openBoaView"
+            name="View Submitted Jobs">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -446,6 +451,10 @@
       <handler
             class="edu.iastate.cs.boa.ui.handlers.ChangeBoaCredentialsHandler"
             commandId="edu.iastate.cs.boa.ui.commands.changeBoaCredentials">
+      </handler>
+      <handler
+            class="edu.iastate.cs.boa.ui.handlers.OpenBoaView"
+            commandId="edu.iastate.cs.boa.ui.commands.openBoaView">
       </handler>
    </extension>
    <extension
@@ -475,6 +484,10 @@
                   mnemonic="P"
                   id="edu.iastate.cs.boa.ui.menus.changeBoaCredentials">
             </command>
+            <command
+                  commandId="edu.iastate.cs.boa.ui.commands.openBoaView"
+                  id="edu.iastate.cs.boa.ui.menus.openBoaView">
+            </command>
          </menu>
       </menuContribution>
       <menuContribution
@@ -489,6 +502,51 @@
             </command>
          </toolbar>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="edu.iastate.cs.boa.ui.views.BoaJobsView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.ProblemView">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="edu.iastate.cs.boa.ui.views.BoaJobsView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.ProblemView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="edu.iastate.cs.boa.ui"
+            name="Boa">
+      </category>
+      <view
+            category="edu.iastate.cs.boa.ui"
+            class="edu.iastate.cs.boa.ui.views.BoaJobsView"
+            icon="icons/sample.gif"
+            id="edu.iastate.cs.boa.ui.views.BoaJobsView"
+            name="Boa Jobs"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.compare.structureCreators">
    </extension>
 
 </plugin>
