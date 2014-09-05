@@ -66,7 +66,7 @@ public class BoaJobsView extends ViewPart {
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "edu.iastate.cs.boa.ui.views.BoaJobsView";
+	public static final String ID = "edu.iastate.cs.boa.ui.views.BoaJobs";
 
 	private static final int PAGE_SIZE = 10;
 
