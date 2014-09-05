@@ -30,6 +30,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -82,16 +83,19 @@ public class BoaJobsView extends ViewPart {
 	BoaClient client;
 
 	class ViewContentProvider implements IStructuredContentProvider {
-		public void inputChanged(Viewer v, Object oldInput, Object newInput) { }
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
 
-		public void dispose() { }
+		public void dispose() {
+		}
 
 		public Object[] getElements(Object parent) {
 			return new String[] {}; // don't populate the table
 		}
 	}
 
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
+	class ViewLabelProvider extends LabelProvider implements
+			ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
 		}
@@ -116,7 +120,8 @@ public class BoaJobsView extends ViewPart {
 	 * This method renders the columns in the table, then populates them with
 	 * the user's Boa job information.
 	 * 
-	 * @param parent the parent GUI object
+	 * @param parent
+	 *            the parent GUI object
 	 */
 	public void createPartControl(Composite parent) {
 		String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
@@ -124,7 +129,8 @@ public class BoaJobsView extends ViewPart {
 		int[] COLUMN_WIDTHS = { 50, 175, 150, 125, 150 };
 
 		try {
-			client.login(credentials.get("username", ""), credentials.get("password", ""));
+			client.login(credentials.get("username", ""),
+					credentials.get("password", ""));
 		} catch (final LoginException e) {
 			e.printStackTrace();
 		} catch (final StorageException e) {
@@ -132,7 +138,8 @@ public class BoaJobsView extends ViewPart {
 		}
 
 		// Table appearance configuration
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
+				| SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
@@ -151,10 +158,12 @@ public class BoaJobsView extends ViewPart {
 		}
 
 		try {
-			List<JobHandle> jobs = client.getJobList(jobsOffsetIndex, PAGE_SIZE);
+			List<JobHandle> jobs = client
+					.getJobList(jobsOffsetIndex, PAGE_SIZE);
 			for (int i = 0; i < jobs.size(); i++) {
 				// Cache the job URL
-				jobURLs.put(String.valueOf(jobs.get(i).getId()), jobs.get(i).getUrl().toString(), false);
+				jobURLs.put(String.valueOf(jobs.get(i).getId()), jobs.get(i)
+						.getUrl().toString(), false);
 				TableItem item = new TableItem(viewer.getTable(), SWT.CENTER);
 				item.setData(String.valueOf(jobs.get(i).getId()));
 				item.setText(new String[] {
@@ -177,7 +186,8 @@ public class BoaJobsView extends ViewPart {
 			e.printStackTrace();
 		}
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
+		PlatformUI.getWorkbench().getHelpSystem()
+				.setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
 		makeActions(client);
 		hookContextMenu();
 		hookDoubleClickAction();
@@ -228,7 +238,8 @@ public class BoaJobsView extends ViewPart {
 		};
 		refresh.setText("Refresh");
 		refresh.setToolTipText("Refresh");
-		refresh.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+		refresh.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 
 		prevPage = new Action() {
 			public void run() {
@@ -244,12 +255,14 @@ public class BoaJobsView extends ViewPart {
 		prevPage.setActionDefinitionId("Prev Page");
 		prevPage.setDescription("Go to previous page of Boa jobs");
 		prevPage.setId("Previous Boa Jobs Page");
-		prevPage.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+		prevPage.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 
 		nextPage = new Action() {
 			public void run() {
 				try {
-					client.login(credentials.get("username", ""), credentials.get("password", ""));
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
 
 					if (jobsOffsetIndex + PAGE_SIZE > client.getJobCount()) {
 						client.close();
@@ -260,6 +273,11 @@ public class BoaJobsView extends ViewPart {
 					e.printStackTrace();
 				} catch (final BoaException e) {
 					e.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						showMessage("Please restart Eclipse!");
+					}
 				} catch (final StorageException e) {
 					e.printStackTrace();
 				}
@@ -272,16 +290,20 @@ public class BoaJobsView extends ViewPart {
 		nextPage.setActionDefinitionId("Next Page");
 		nextPage.setDescription("Go to next page of Boa jobs");
 		nextPage.setId("Next Boa Jobs Page");
-		nextPage.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+		nextPage.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 
 		doubleClickAction = new Action() {
 			public void run() {
 				try {
-					client.login(credentials.get("username", ""), credentials.get("password", ""));
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
 					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection).getFirstElement();
+					Object obj = ((IStructuredSelection) selection)
+							.getFirstElement();
 
-					final IWebBrowser browser = PlatformUI.getWorkbench().getBrowserSupport().createBrowser("Boa");
+					final IWebBrowser browser = PlatformUI.getWorkbench()
+							.getBrowserSupport().createBrowser("Boa");
 
 					String URL = jobURLs.get(obj.toString(), "");
 					browser.openURL(new URL(URL));
@@ -312,14 +334,16 @@ public class BoaJobsView extends ViewPart {
 	 */
 	private void paginate(int offset) {
 		try {
-			client.login(credentials.get("username", ""), credentials.get("password", ""));
+			client.login(credentials.get("username", ""),
+					credentials.get("password", ""));
 
 			viewer.refresh();
 			List<JobHandle> jobs = client.getJobList(offset, PAGE_SIZE);
 
 			for (int i = 0; i < jobs.size(); i++) {
 				// Cache the job URL
-				jobURLs.put(String.valueOf(jobs.get(i).getId()), jobs.get(i).getUrl().toString(), false);
+				jobURLs.put(String.valueOf(jobs.get(i).getId()), jobs.get(i)
+						.getUrl().toString(), false);
 
 				TableItem item = new TableItem(viewer.getTable(), SWT.CENTER);
 				item.setData(String.valueOf(jobs.get(i).getId()));
@@ -350,6 +374,10 @@ public class BoaJobsView extends ViewPart {
 				doubleClickAction.run();
 			}
 		});
+	}
+
+	private void showMessage(String message) {
+		MessageDialog.openInformation(null, "Boa View", message);
 	}
 
 	/**
