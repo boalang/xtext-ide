@@ -180,6 +180,11 @@ public class BoaJobsView extends ViewPart {
 			e.printStackTrace();
 		} catch (final BoaException e) {
 			e.printStackTrace();
+			try {
+				client.close();
+			} catch (BoaException e2) {
+				showMessage("Please restart Eclipse!");
+			}
 		} catch (final StorageException e) {
 			e.printStackTrace();
 		} catch (final IOException e) {
@@ -243,10 +248,11 @@ public class BoaJobsView extends ViewPart {
 
 		prevPage = new Action() {
 			public void run() {
-				if (jobsOffsetIndex - PAGE_SIZE < 0)
+				if (jobsOffsetIndex - PAGE_SIZE < 0) {
 					jobsOffsetIndex = 0;
-				else
+				} else {
 					jobsOffsetIndex -= PAGE_SIZE;
+				}
 				paginate(jobsOffsetIndex);
 			}
 		};
@@ -361,6 +367,11 @@ public class BoaJobsView extends ViewPart {
 			e.printStackTrace();
 		} catch (final BoaException e) {
 			e.printStackTrace();
+			try {
+				client.close();
+			} catch (BoaException e2) {
+				showMessage("Please restart Eclipse!");
+			}
 		} catch (final StorageException e) {
 			e.printStackTrace();
 		} catch (final IOException e) {
