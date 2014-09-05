@@ -544,6 +544,12 @@
             name="Boa Jobs"
             restorable="true">
       </view>
+      <view
+            class="edu.iastate.cs.boa.ui.views.BoaJobDetailsView"
+            id="edu.iastate.cs.boa.ui.views.BoaJobDetails"
+            name="Boa Job Details"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.compare.structureCreators">
