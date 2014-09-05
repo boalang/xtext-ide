@@ -15,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.iastate.cs.boa.ui.views;
 
 import java.io.IOException;
@@ -63,7 +64,9 @@ import edu.iastate.cs.boa.NotLoggedInException;
 /**
  * @author ssrirama
  */
+
 public class BoaJobsView extends ViewPart {
+
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
@@ -80,6 +83,7 @@ public class BoaJobsView extends ViewPart {
 	ISecurePreferences secureStorage;
 	ISecurePreferences credentials;
 	ISecurePreferences jobURLs;
+	ISecurePreferences forDetailsView;
 	BoaClient client;
 
 	class ViewContentProvider implements IStructuredContentProvider {
@@ -105,6 +109,9 @@ public class BoaJobsView extends ViewPart {
 		}
 	}
 
+	/*
+	 * Later, for making the columns sortable.
+	 */
 	class NameSorter extends ViewerSorter {
 	}
 
@@ -112,6 +119,7 @@ public class BoaJobsView extends ViewPart {
 		secureStorage = SecurePreferencesFactory.getDefault();
 		credentials = secureStorage.node("/boa/credentials");
 		jobURLs = secureStorage.node("/boa/jobURLs");
+		forDetailsView = secureStorage.node("/boa/jobID");
 		client = new BoaClient();
 		jobsOffsetIndex = 0;
 	}
@@ -121,7 +129,7 @@ public class BoaJobsView extends ViewPart {
 	 * the user's Boa job information.
 	 * 
 	 * @param parent
-	 *            the parent GUI object
+	 *            The parent GUI object
 	 */
 	public void createPartControl(Composite parent) {
 		String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
@@ -176,13 +184,14 @@ public class BoaJobsView extends ViewPart {
 			}
 			jobURLs.flush();
 			client.close();
+
 		} catch (final NotLoggedInException e) {
 			e.printStackTrace();
 		} catch (final BoaException e) {
 			e.printStackTrace();
 			try {
 				client.close();
-			} catch (BoaException e2) {
+			} catch (final BoaException e2) {
 				showMessage("Please restart Eclipse!");
 			}
 		} catch (final StorageException e) {
@@ -203,7 +212,7 @@ public class BoaJobsView extends ViewPart {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(final IMenuManager manager) {
+			public void menuAboutToShow(IMenuManager manager) {
 				BoaJobsView.this.fillContextMenu(manager);
 			}
 		});
@@ -219,6 +228,7 @@ public class BoaJobsView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(final IMenuManager manager) {
+
 	}
 
 	private void fillContextMenu(final IMenuManager manager) {
@@ -234,6 +244,7 @@ public class BoaJobsView extends ViewPart {
 	}
 
 	private void makeActions(final BoaClient client) {
+
 		refresh = new Action() {
 			public void run() {
 				jobsOffsetIndex = 0;
@@ -281,7 +292,7 @@ public class BoaJobsView extends ViewPart {
 					e.printStackTrace();
 					try {
 						client.close();
-					} catch (BoaException e2) {
+					} catch (final BoaException e2) {
 						showMessage("Please restart Eclipse!");
 					}
 				} catch (final StorageException e) {
@@ -302,27 +313,43 @@ public class BoaJobsView extends ViewPart {
 		doubleClickAction = new Action() {
 			public void run() {
 				try {
+
 					client.login(credentials.get("username", ""),
 							credentials.get("password", ""));
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection)
 							.getFirstElement();
 
+					/*
+					 * Cache the jobID selected and open the Job Details view
+					 */
+					forDetailsView.putInt("jobID",
+							Integer.valueOf(obj.toString()), false);
+
+					/*
+					 * Open the URL for the job
+					 */
 					final IWebBrowser browser = PlatformUI.getWorkbench()
 							.getBrowserSupport().createBrowser("Boa");
 
 					String URL = jobURLs.get(obj.toString(), "");
 					browser.openURL(new URL(URL));
+
 					client.close();
-				} catch (final PartInitException e) {
-					e.printStackTrace();
 				} catch (final NumberFormatException e) {
 					e.printStackTrace();
 				} catch (final NotLoggedInException e) {
 					e.printStackTrace();
 				} catch (final BoaException e) {
 					e.printStackTrace();
+					try {
+						client.close();
+					} catch (final BoaException e2) {
+						showMessage("Please restart Eclipse!");
+					}
 				} catch (final StorageException e) {
+					e.printStackTrace();
+				} catch (final PartInitException e) {
 					e.printStackTrace();
 				} catch (final MalformedURLException e) {
 					e.printStackTrace();
@@ -359,17 +386,18 @@ public class BoaJobsView extends ViewPart {
 						String.valueOf(jobs.get(i).getDate()),
 						String.valueOf(jobs.get(i).getCompilerStatus()),
 						String.valueOf(jobs.get(i).getExecutionStatus()),
-						jobs.get(i).getDataset().getName() });
+						String.valueOf(jobs.get(i).getDataset()) });
 			}
 			jobURLs.flush();
 			client.close();
+
 		} catch (final NotLoggedInException e) {
 			e.printStackTrace();
 		} catch (final BoaException e) {
 			e.printStackTrace();
 			try {
 				client.close();
-			} catch (BoaException e2) {
+			} catch (final BoaException e2) {
 				showMessage("Please restart Eclipse!");
 			}
 		} catch (final StorageException e) {
