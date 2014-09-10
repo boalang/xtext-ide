@@ -540,8 +540,16 @@
             category="edu.iastate.cs.boa.ui"
             class="edu.iastate.cs.boa.ui.views.BoaJobsView"
             icon="icons/sample.gif"
-            id="edu.iastate.cs.boa.ui.views.BoaJobsView"
+            id="edu.iastate.cs.boa.ui.views.BoaJobs"
             name="Boa Jobs"
+            restorable="true">
+      </view>
+      <view
+            category="edu.iastate.cs.boa.ui"
+            class="edu.iastate.cs.boa.ui.views.BoaJobDetailsView"
+            icon="icons/sample.gif"
+            id="edu.iastate.cs.boa.ui.views.BoaJobDetails"
+            name="Boa Job Details"
             restorable="true">
       </view>
    </extension>
