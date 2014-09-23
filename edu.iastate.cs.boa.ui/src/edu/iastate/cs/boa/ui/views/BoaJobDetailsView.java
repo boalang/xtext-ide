@@ -220,6 +220,43 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
+		
+		/*
+		 * Delete button
+		 */
+		Button delete = new Button(container, SWT.PUSH);
+		delete.setText("Delete");
+		delete.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					job.delete();
+					client.close();
+					viewer.refresh();
+					showMessage("Job has been deleted!");
+				} catch (NotLoggedInException e1) {
+					e1.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						showMessage("Please restart Eclipse!");
+					}
+				} catch (StorageException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
 
 		PlatformUI.getWorkbench().getHelpSystem()
 				.setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
