@@ -83,8 +83,6 @@ public class BoaJobsView extends ViewPart {
 	ISecurePreferences forDetailsView;
 	BoaClient client;
 	
-	// comment
-
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
