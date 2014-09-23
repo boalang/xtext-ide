@@ -55,6 +55,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.iastate.cs.boa.BoaClient;
 import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.JobHandle;
+import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
 
 /**
@@ -285,6 +286,100 @@ public class BoaJobDetailsView extends ViewPart {
 					}
 				} catch (StorageException e1) {
 					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
+		
+		/*
+		 * Output button
+		 */
+		Button output = new Button(container, SWT.PUSH);
+		output.setText("Output");
+		output.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					showMessage("Job output!\n" + job.getOutput());
+					client.close();
+					refreshTable.run();
+				} catch (NotLoggedInException e1) {
+					e1.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						showMessage("Please restart Eclipse!");
+					}
+				} catch (StorageException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
+		
+		/*
+		 * Make Public/Private button
+		 */
+		final Button accessStatus = new Button(container, SWT.PUSH);
+
+		try {
+			client.login(credentials.get("username", ""),
+					credentials.get("password", ""));
+			if (job.getPublic()) {
+				accessStatus.setText("Make Private");
+			} else {
+				accessStatus.setText("Make Public");
+			}
+
+			client.close();
+		} catch (BoaException e4) {
+			e4.printStackTrace();
+		} catch (StorageException e1) {
+			e1.printStackTrace();
+		}
+
+		accessStatus.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					if (job.getPublic()) {
+						job.setPublic(false);
+						accessStatus.setText("Make Public");
+					} else {
+						job.setPublic(true);
+						accessStatus.setText("Make Private");
+					}
+					accessStatus.pack(); // resize the button
+					client.close();
+				} catch (LoginException e3) {
+					e3.printStackTrace();
+				} catch (StorageException e3) {
+					e3.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						e2.printStackTrace();
+					}
 				}
 			}
 
