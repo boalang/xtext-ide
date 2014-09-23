@@ -257,6 +257,43 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
+		
+		/*
+		 * Resubmit button
+		 */
+		Button resubmit = new Button(container, SWT.PUSH);
+		resubmit.setText("Resubmit");
+		resubmit.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					job.resubmit();
+					client.close();
+					refreshTable.run();
+					showMessage("Job has been resubmitted!");
+				} catch (NotLoggedInException e1) {
+					e1.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						showMessage("Please restart Eclipse!");
+					}
+				} catch (StorageException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
 
 		PlatformUI.getWorkbench().getHelpSystem()
 				.setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
