@@ -322,7 +322,7 @@ public class BoaJobsView extends ViewPart {
 							Integer.valueOf(obj.toString()), false);
 
 					// Open the Job Details view and refresh the table
-					OpenBoaView.open();
+					OpenBoaView.openDetailsView();
 					BoaJobDetailsView.refreshTable.run();
 
 					client.close();
