@@ -48,10 +48,11 @@ public class BoaJobOutputView extends ViewPart {
 	 */
 	public static final String ID = "edu.iastate.cs.boa.ui.views.BoaJobOutput";
 
-	ISecurePreferences secureStorage;
-	ISecurePreferences credentials;
+	private ISecurePreferences secureStorage;
+	private ISecurePreferences credentials;
 	private ISecurePreferences jobID;
 	BoaClient client;
+	protected static Text output;
 
 	public BoaJobOutputView() {
 		secureStorage = SecurePreferencesFactory.getDefault();
@@ -61,8 +62,8 @@ public class BoaJobOutputView extends ViewPart {
 	}
 
 	/**
-	 * This method renders the columns in the table, then populates them with
-	 * the user's Boa job information.
+	 * This method renders the in-view text editor then populates it with the
+	 * selected job's output
 	 * 
 	 * @param parent
 	 *            The parent GUI object
@@ -79,7 +80,7 @@ public class BoaJobOutputView extends ViewPart {
 			 * parent GUI object, populate it with the job's output, then set it
 			 * to wrap the text.
 			 */
-			Text output = new Text(parent, SWT.WRAP);
+			output = new Text(parent, SWT.WRAP);
 			output.setText(job.getOutput());
 			output.setEditable(false); // don't let the user edit
 
