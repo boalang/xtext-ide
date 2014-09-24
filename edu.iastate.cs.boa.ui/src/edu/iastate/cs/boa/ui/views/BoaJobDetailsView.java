@@ -238,6 +238,7 @@ public class BoaJobDetailsView extends ViewPart {
 					job.delete();
 					client.close();
 					viewer.refresh();
+					BoaJobsView.refresh.run();
 					showMessage("Job has been deleted!");
 				} catch (NotLoggedInException e1) {
 					e1.printStackTrace();
@@ -306,23 +307,7 @@ public class BoaJobDetailsView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					client.login(credentials.get("username", ""),
-							credentials.get("password", ""));
-					OpenBoaView.openOutputView();
-					client.close();
-				} catch (NotLoggedInException e1) {
-					e1.printStackTrace();
-				} catch (BoaException e1) {
-					e1.printStackTrace();
-					try {
-						client.close();
-					} catch (BoaException e2) {
-						showMessage("Please restart Eclipse!");
-					}
-				} catch (StorageException e1) {
-					e1.printStackTrace();
-				}
+				OpenBoaView.openOutputView();
 			}
 
 			@Override
