@@ -126,7 +126,7 @@ public class BoaJobDetailsView extends ViewPart {
 
 		final String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
 				"Compilation Status", "Execution Status", "Input Dataset" };
-		final int[] COLUMN_WIDTHS = { 50, 175, 150, 125, 150 };
+		final int[] COLUMN_WIDTHS = { 50, 175, 125, 105, 125 };
 
 		try {
 			client.login(credentials.get("username", ""),
