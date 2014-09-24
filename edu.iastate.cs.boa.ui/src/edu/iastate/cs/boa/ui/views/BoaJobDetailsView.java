@@ -38,7 +38,11 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TableColumn;
@@ -51,6 +55,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.iastate.cs.boa.BoaClient;
 import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.JobHandle;
+import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
 
 /**
@@ -117,6 +122,8 @@ public class BoaJobDetailsView extends ViewPart {
 	 *            The parent GUI object
 	 */
 	public void createPartControl(final Composite parent) {
+		int NUM_BUTTONS = 5;
+
 		final String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
 				"Compilation Status", "Execution Status", "Input Dataset" };
 		final int[] COLUMN_WIDTHS = { 50, 175, 150, 125, 150 };
@@ -143,6 +150,7 @@ public class BoaJobDetailsView extends ViewPart {
 				column.setResizable(true);
 				column.setData(COLUMN_NAMES[i]);
 			}
+
 			TableItem item = new TableItem(viewer.getTable(), SWT.CENTER);
 
 			job = client.getJob(jobID.getInt("jobID", 0));
@@ -169,6 +177,218 @@ public class BoaJobDetailsView extends ViewPart {
 				showMessage("Please restart Eclipse!");
 			}
 		}
+
+		Composite container = new Composite(parent, SWT.LEFT_TO_RIGHT);
+		container.setLayout(new GridLayout(NUM_BUTTONS, false));
+
+		/*
+		 * Stop button
+		 */
+		Button stop = new Button(container, SWT.PUSH);
+		stop.setText("Stop");
+		stop.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					job.stop();
+					client.close();
+					refreshTable.run();
+					showMessage("Job has been stopped!");
+				} catch (NotLoggedInException e1) {
+					e1.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						/*
+						 * If the program reaches here, you've got bigger
+						 * problems...
+						 */
+						showMessage("Please restart Eclipse!");
+					}
+				} catch (StorageException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
+		
+		/*
+		 * Delete button
+		 */
+		Button delete = new Button(container, SWT.PUSH);
+		delete.setText("Delete");
+		delete.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					job.delete();
+					client.close();
+					viewer.refresh();
+					showMessage("Job has been deleted!");
+				} catch (NotLoggedInException e1) {
+					e1.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						showMessage("Please restart Eclipse!");
+					}
+				} catch (StorageException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
+		
+		/*
+		 * Resubmit button
+		 */
+		Button resubmit = new Button(container, SWT.PUSH);
+		resubmit.setText("Resubmit");
+		resubmit.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					job.resubmit();
+					client.close();
+					refreshTable.run();
+					showMessage("Job has been resubmitted!");
+				} catch (NotLoggedInException e1) {
+					e1.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						showMessage("Please restart Eclipse!");
+					}
+				} catch (StorageException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
+		
+		/*
+		 * Output button
+		 */
+		Button output = new Button(container, SWT.PUSH);
+		output.setText("Output");
+		output.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					showMessage("Job output!\n" + job.getOutput());
+					client.close();
+					refreshTable.run();
+				} catch (NotLoggedInException e1) {
+					e1.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						showMessage("Please restart Eclipse!");
+					}
+				} catch (StorageException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
+		
+		/*
+		 * Make Public/Private button
+		 */
+		final Button accessStatus = new Button(container, SWT.PUSH);
+
+		try {
+			client.login(credentials.get("username", ""),
+					credentials.get("password", ""));
+			if (job.getPublic()) {
+				accessStatus.setText("Make Private");
+			} else {
+				accessStatus.setText("Make Public");
+			}
+
+			client.close();
+		} catch (BoaException e4) {
+			e4.printStackTrace();
+		} catch (StorageException e1) {
+			e1.printStackTrace();
+		}
+
+		accessStatus.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+					if (job.getPublic()) {
+						job.setPublic(false);
+						accessStatus.setText("Make Public");
+					} else {
+						job.setPublic(true);
+						accessStatus.setText("Make Private");
+					}
+					accessStatus.pack(); // resize the button
+					client.close();
+				} catch (LoginException e3) {
+					e3.printStackTrace();
+				} catch (StorageException e3) {
+					e3.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+					try {
+						client.close();
+					} catch (BoaException e2) {
+						e2.printStackTrace();
+					}
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
 
 		PlatformUI.getWorkbench().getHelpSystem()
 				.setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
@@ -211,27 +431,11 @@ public class BoaJobDetailsView extends ViewPart {
 	private void makeActions() {
 		refreshTable = new Action() {
 			public void run() {
-				showMessage("refresh table");
-
 				/*
 				 * Clear the table
 				 */
 				viewer.refresh();
 
-				final String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
-						"Compilation Status", "Execution Status",
-						"Input Dataset" };
-				final int[] COLUMN_WIDTHS = { 50, 175, 150, 125, 150 };
-
-				for (int i = 0; i < COLUMN_NAMES.length; i++) {
-					TableColumn column = new TableColumn(viewer.getTable(),
-							SWT.CENTER);
-					column.setText(COLUMN_NAMES[i]);
-					column.setWidth(COLUMN_WIDTHS[i]);
-					column.setMoveable(true);
-					column.setResizable(true);
-					column.setData(COLUMN_NAMES[i]);
-				}
 				TableItem item = new TableItem(viewer.getTable(), SWT.CENTER);
 
 				try {

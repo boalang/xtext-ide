@@ -19,8 +19,6 @@
 package edu.iastate.cs.boa.ui.views;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.eclipse.equinox.security.storage.ISecurePreferences;
@@ -50,9 +48,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.iastate.cs.boa.BoaClient;
@@ -60,6 +56,7 @@ import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.JobHandle;
 import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
+import edu.iastate.cs.boa.ui.handlers.OpenBoaView;
 
 /**
  * @author ssrirama
@@ -85,7 +82,7 @@ public class BoaJobsView extends ViewPart {
 	ISecurePreferences jobURLs;
 	ISecurePreferences forDetailsView;
 	BoaClient client;
-
+	
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -320,20 +317,13 @@ public class BoaJobsView extends ViewPart {
 					Object obj = ((IStructuredSelection) selection)
 							.getFirstElement();
 
-					/*
-					 * Cache the jobID selected and open the Job Details view
-					 */
+					// Cache the job ID selected
 					forDetailsView.putInt("jobID",
 							Integer.valueOf(obj.toString()), false);
 
-					/*
-					 * Open the URL for the job
-					 */
-					final IWebBrowser browser = PlatformUI.getWorkbench()
-							.getBrowserSupport().createBrowser("Boa");
-
-					String URL = jobURLs.get(obj.toString(), "");
-					browser.openURL(new URL(URL));
+					// Open the Job Details view and refresh the table
+					OpenBoaView.openDetailsView();
+					BoaJobDetailsView.refreshTable.run();
 
 					client.close();
 				} catch (final NumberFormatException e) {
@@ -348,10 +338,6 @@ public class BoaJobsView extends ViewPart {
 						showMessage("Please restart Eclipse!");
 					}
 				} catch (final StorageException e) {
-					e.printStackTrace();
-				} catch (final PartInitException e) {
-					e.printStackTrace();
-				} catch (final MalformedURLException e) {
 					e.printStackTrace();
 				}
 			}
