@@ -57,6 +57,7 @@ import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.JobHandle;
 import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
+import edu.iastate.cs.boa.ui.handlers.OpenBoaView;
 
 /**
  * @author ssrirama
@@ -221,7 +222,7 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
-		
+
 		/*
 		 * Delete button
 		 */
@@ -258,7 +259,7 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
-		
+
 		/*
 		 * Resubmit button
 		 */
@@ -295,7 +296,7 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
-		
+
 		/*
 		 * Output button
 		 */
@@ -308,9 +309,8 @@ public class BoaJobDetailsView extends ViewPart {
 				try {
 					client.login(credentials.get("username", ""),
 							credentials.get("password", ""));
-					showMessage("Job output!\n" + job.getOutput());
+					OpenBoaView.openOutputView();
 					client.close();
-					refreshTable.run();
 				} catch (NotLoggedInException e1) {
 					e1.printStackTrace();
 				} catch (BoaException e1) {
@@ -331,7 +331,7 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
-		
+
 		/*
 		 * Make Public/Private button
 		 */
