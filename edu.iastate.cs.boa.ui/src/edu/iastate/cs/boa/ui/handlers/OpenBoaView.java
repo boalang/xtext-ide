@@ -23,23 +23,43 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import edu.iastate.cs.boa.ui.views.BoaJobDetailsView;
+import edu.iastate.cs.boa.ui.views.BoaJobOutputView;
 import edu.iastate.cs.boa.ui.views.BoaJobsView;
 
 /**
- * A handler to open the Boa job list view.
+ * A handler to open Boa views.
  *
  * @author ssrirama
  * @author rdyer
  */
 public class OpenBoaView extends AbstractHandler {
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		open();
+		openJobListView();
 		return null;
 	}
 
-	public static void open() {
+	public static void openJobListView() {
 		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(BoaJobsView.ID);
-		} catch (final PartInitException e) { }
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getActivePage().showView(BoaJobsView.ID);
+		} catch (final PartInitException e) {
+		}
+	}
+
+	public static void openDetailsView() {
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getActivePage().showView(BoaJobDetailsView.ID);
+		} catch (final PartInitException e) {
+		}
+	}
+
+	public static void openOutputView() {
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getActivePage().showView(BoaJobOutputView.ID);
+		} catch (final PartInitException e) {
+		}
 	}
 }
