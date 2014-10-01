@@ -26,14 +26,12 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 
 import edu.iastate.cs.boa.BoaClient;
 import edu.iastate.cs.boa.BoaException;
@@ -44,7 +42,7 @@ import edu.iastate.cs.boa.NotLoggedInException;
  * @author ssrirama
  */
 
-public class BoaJobOutputView extends ViewPart {
+public class BoaJobOutputView extends BoaAbstractView {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -173,10 +171,6 @@ public class BoaJobOutputView extends ViewPart {
 
 	private void hookDoubleClickAction() {
 
-	}
-
-	private void showMessage(String message) {
-		MessageDialog.openInformation(null, "Boa View", message);
 	}
 
 	/**

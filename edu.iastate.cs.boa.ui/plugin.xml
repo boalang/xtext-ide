@@ -508,16 +508,7 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <view
-               id="edu.iastate.cs.boa.ui.views.BoaJobsView"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.ProblemView">
-         </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               id="edu.iastate.cs.boa.ui.views.BoaJobsView"
+               id="edu.iastate.cs.boa.ui.views.BoaJobs"
                ratio="0.5"
                relationship="right"
                relative="org.eclipse.ui.views.ProblemView">
