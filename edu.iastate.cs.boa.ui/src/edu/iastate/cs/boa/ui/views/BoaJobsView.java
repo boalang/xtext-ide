@@ -370,7 +370,7 @@ public class BoaJobsView extends BoaAbstractView {
 						String.valueOf(jobs.get(i).getDate()),
 						String.valueOf(jobs.get(i).getCompilerStatus()),
 						String.valueOf(jobs.get(i).getExecutionStatus()),
-						String.valueOf(jobs.get(i).getDataset()) });
+						String.valueOf(jobs.get(i).getDataset().getName()) });
 			}
 			jobURLs.flush();
 			client.close();
