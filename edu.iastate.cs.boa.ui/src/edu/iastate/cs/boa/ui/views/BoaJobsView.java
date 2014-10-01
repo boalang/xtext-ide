@@ -75,7 +75,7 @@ public class BoaJobsView extends ViewPart {
 	private Action doubleClickAction;
 	private Action prevPage;
 	private Action nextPage;
-	private Action refresh;
+	protected static Action refresh;
 	private static int jobsOffsetIndex;
 	ISecurePreferences secureStorage;
 	ISecurePreferences credentials;
@@ -322,7 +322,7 @@ public class BoaJobsView extends ViewPart {
 							Integer.valueOf(obj.toString()), false);
 
 					// Open the Job Details view and refresh the table
-					OpenBoaView.open();
+					OpenBoaView.openDetailsView();
 					BoaJobDetailsView.refreshTable.run();
 
 					client.close();

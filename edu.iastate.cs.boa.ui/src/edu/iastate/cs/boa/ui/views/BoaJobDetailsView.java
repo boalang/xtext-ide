@@ -57,6 +57,7 @@ import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.JobHandle;
 import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
+import edu.iastate.cs.boa.ui.handlers.OpenBoaView;
 
 /**
  * @author ssrirama
@@ -126,7 +127,7 @@ public class BoaJobDetailsView extends ViewPart {
 
 		final String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
 				"Compilation Status", "Execution Status", "Input Dataset" };
-		final int[] COLUMN_WIDTHS = { 50, 175, 150, 125, 150 };
+		final int[] COLUMN_WIDTHS = { 50, 175, 125, 105, 125 };
 
 		try {
 			client.login(credentials.get("username", ""),
@@ -221,7 +222,7 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
-		
+
 		/*
 		 * Delete button
 		 */
@@ -237,6 +238,7 @@ public class BoaJobDetailsView extends ViewPart {
 					job.delete();
 					client.close();
 					viewer.refresh();
+					BoaJobsView.refresh.run();
 					showMessage("Job has been deleted!");
 				} catch (NotLoggedInException e1) {
 					e1.printStackTrace();
@@ -258,7 +260,7 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
-		
+
 		/*
 		 * Resubmit button
 		 */
@@ -295,7 +297,7 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
-		
+
 		/*
 		 * Output button
 		 */
@@ -305,24 +307,8 @@ public class BoaJobDetailsView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					client.login(credentials.get("username", ""),
-							credentials.get("password", ""));
-					showMessage("Job output!\n" + job.getOutput());
-					client.close();
-					refreshTable.run();
-				} catch (NotLoggedInException e1) {
-					e1.printStackTrace();
-				} catch (BoaException e1) {
-					e1.printStackTrace();
-					try {
-						client.close();
-					} catch (BoaException e2) {
-						showMessage("Please restart Eclipse!");
-					}
-				} catch (StorageException e1) {
-					e1.printStackTrace();
-				}
+				OpenBoaView.openOutputView();
+				BoaJobOutputView.refreshDisplay.run();
 			}
 
 			@Override
@@ -331,7 +317,7 @@ public class BoaJobDetailsView extends ViewPart {
 			}
 
 		});
-		
+
 		/*
 		 * Make Public/Private button
 		 */
