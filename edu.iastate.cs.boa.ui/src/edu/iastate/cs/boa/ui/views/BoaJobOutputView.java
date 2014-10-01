@@ -131,7 +131,44 @@ public class BoaJobOutputView extends ViewPart {
 	}
 
 	private void makeActions(final BoaClient client) {
-		
+		refreshDisplay = new Action() {
+			public void run() {
+				try {
+
+					// Populate with default blank file
+					output.setText("");
+
+					client.login(credentials.get("username", ""),
+							credentials.get("password", ""));
+
+					JobHandle job = client.getJob(jobID.getInt("jobID", 0));
+
+					String jobOutput = job.getOutput(); // grab output
+
+					// Check if the output is substantiative
+					if (validJobOutput(jobOutput)) {
+						output.setText(jobOutput);
+					}
+
+					client.close();
+				} catch (NotLoggedInException e) {
+					e.printStackTrace();
+				} catch (BoaException e) {
+					e.printStackTrace();
+				} catch (StorageException e) {
+					e.printStackTrace();
+				}
+
+			}
+		};
+		refreshDisplay.setToolTipText("Refresh");
+		refreshDisplay.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+	}
+
+	private boolean validJobOutput(String input) {
+		return input != null && input.length() > 0;
 	}
 
 	private void hookDoubleClickAction() {
