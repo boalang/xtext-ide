@@ -77,13 +77,14 @@ public class BoaJobOutputView extends BoaAbstractView {
 
 			JobHandle job = client.getJob(jobID.getInt("jobID", 0));
 
-			/*
-			 * Create a text editor, build it into our GUI by referencing the
-			 * parent GUI object, populate it with the job's output, and set it
-			 * to wrap the text.
-			 */
 			output = new Text(parent, SWT.WRAP);
-			output.setText(job.getOutput());
+			output.setText("No output to display!"); // default
+			String jobOutput = job.getOutput();
+			
+			// Check if the output is substantiative
+			if (validJobOutput(jobOutput)) {
+				output.setText(jobOutput);
+			}
 			output.setEditable(false); // don't let the user edit
 
 			client.close();
