@@ -21,6 +21,7 @@ package edu.iastate.cs.boa.ui.views;
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -30,6 +31,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.iastate.cs.boa.BoaClient;
@@ -53,6 +56,7 @@ public class BoaJobOutputView extends ViewPart {
 	private ISecurePreferences jobID;
 	BoaClient client;
 	protected static Text output;
+	protected static Action refreshDisplay;
 
 	public BoaJobOutputView() {
 		secureStorage = SecurePreferencesFactory.getDefault();
@@ -77,7 +81,7 @@ public class BoaJobOutputView extends ViewPart {
 
 			/*
 			 * Create a text editor, build it into our GUI by referencing the
-			 * parent GUI object, populate it with the job's output, then set it
+			 * parent GUI object, populate it with the job's output, and set it
 			 * to wrap the text.
 			 */
 			output = new Text(parent, SWT.WRAP);
@@ -123,9 +127,11 @@ public class BoaJobOutputView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(final IToolBarManager manager) {
+		manager.add(refreshDisplay);
 	}
 
 	private void makeActions(final BoaClient client) {
+		
 	}
 
 	private void hookDoubleClickAction() {
