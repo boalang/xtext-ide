@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.iastate.cs.boa.ui.views;
 
 import org.eclipse.equinox.security.storage.ISecurePreferences;
@@ -26,7 +25,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,7 +48,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 
 import edu.iastate.cs.boa.BoaClient;
 import edu.iastate.cs.boa.BoaException;
@@ -63,7 +60,7 @@ import edu.iastate.cs.boa.ui.handlers.OpenBoaView;
  * @author ssrirama
  */
 
-public class BoaJobDetailsView extends ViewPart {
+public class BoaJobDetailsView extends BoaAbstractView {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -477,10 +474,6 @@ public class BoaJobDetailsView extends ViewPart {
 				doubleClickAction.run();
 			}
 		});
-	}
-
-	private void showMessage(String message) {
-		MessageDialog.openInformation(null, "Boa View", message);
 	}
 
 	/**
