@@ -308,6 +308,7 @@ public class BoaJobDetailsView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				OpenBoaView.openOutputView();
+				BoaJobOutputView.refreshDisplay.run();
 			}
 
 			@Override
