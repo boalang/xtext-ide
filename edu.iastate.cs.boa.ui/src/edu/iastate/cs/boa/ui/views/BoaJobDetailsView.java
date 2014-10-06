@@ -449,7 +449,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 						String.valueOf(job.getDate()),
 						String.valueOf(job.getCompilerStatus()),
 						String.valueOf(job.getExecutionStatus()),
-						String.valueOf(job.getDataset()) });
+						String.valueOf(job.getDataset().getName()) });
 
 			}
 		};
