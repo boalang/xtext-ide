@@ -392,12 +392,10 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							+ System.currentTimeMillis() + ".boa");
 
 					InputStream inputStream = new ByteArrayInputStream(job.getSource().getBytes());
-					
+
 					sourceFile.create(inputStream, false, null);
-					
 
 				} catch (CoreException e1) {
-					showMessage("view source code button failed");
 					e1.printStackTrace();
 				} catch (NotLoggedInException e1) {
 					e1.printStackTrace();
