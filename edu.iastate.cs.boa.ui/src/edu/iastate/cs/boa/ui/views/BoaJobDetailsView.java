@@ -371,27 +371,27 @@ public class BoaJobDetailsView extends BoaAbstractView {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				String projectName = createProjectName(root);
-				IProject project = root.getProject(projectName);
+				// String projectName = createProjectName(root);
+				IProject project = root.getProject("Boa_Source_Code");
 				try {
 
-					if (project.exists()) {
-						project.delete(false, null);
+					if (!project.exists()) {
+						project.create(null);
+						project.open(null);
+
+						IProjectDescription description = project
+								.getDescription();
+						String[] natureIDs = { XtextProjectHelper.NATURE_ID };
+						description.setNatureIds(natureIDs);
+
+						IFolder sourceFolder = project.getFolder("src");
+						sourceFolder.create(false, true, null);
 					}
-					project.create(null);
-					project.open(null);
-
-					IProjectDescription description = project.getDescription();
-					String[] natureIDs = { XtextProjectHelper.NATURE_ID };
-					description.setNatureIds(natureIDs);
-
-					IFolder sourceFolder = project.getFolder("src");
-					sourceFolder.create(false, true, null);
-
 					IFile sourceFile = project.getFile("src/Code_"
 							+ System.currentTimeMillis() + ".boa");
 
-					InputStream inputStream = new ByteArrayInputStream(job.getSource().getBytes());
+					InputStream inputStream = new ByteArrayInputStream(job
+							.getSource().getBytes());
 
 					sourceFile.create(inputStream, false, null);
 
