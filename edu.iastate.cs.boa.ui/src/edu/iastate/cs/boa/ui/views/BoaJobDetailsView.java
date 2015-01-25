@@ -17,6 +17,13 @@
  */
 package edu.iastate.cs.boa.ui.views;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
@@ -47,7 +54,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 import edu.iastate.cs.boa.BoaClient;
 import edu.iastate.cs.boa.BoaException;
@@ -120,7 +129,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 	 *            The parent GUI object
 	 */
 	public void createPartControl(final Composite parent) {
-		int NUM_BUTTONS = 5;
+		int NUM_BUTTONS = 6;
 
 		final String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
 				"Compilation Status", "Execution Status", "Input Dataset" };
@@ -316,26 +325,32 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		});
 
 		/*
-		 * Make Public/Private button
+		 * Public/Private button
 		 */
-		final Button accessStatus = new Button(container, SWT.PUSH);
 
+		final Button accessStatus = new Button(container, SWT.PUSH);
+		String currentAccessStatus = "Unknown Access Status";
 		try {
 			client.login(credentials.get("username", ""),
 					credentials.get("password", ""));
-			if (job.getPublic()) {
-				accessStatus.setText("Make Private");
-			} else {
-				accessStatus.setText("Make Public");
-			}
-
+			if (job.getPublic() == true) {
+				currentAccessStatus = "Make Private";
+			} else
+				currentAccessStatus = "Make Public";
 			client.close();
-		} catch (BoaException e4) {
-			e4.printStackTrace();
-		} catch (StorageException e1) {
+		} catch (LoginException e3) {
+			e3.printStackTrace();
+		} catch (StorageException e3) {
+			e3.printStackTrace();
+		} catch (BoaException e1) {
 			e1.printStackTrace();
+			try {
+				client.close();
+			} catch (BoaException e2) {
+				e2.printStackTrace();
+			}
 		}
-
+		accessStatus.setText(currentAccessStatus);
 		accessStatus.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -350,12 +365,12 @@ public class BoaJobDetailsView extends BoaAbstractView {
 						job.setPublic(true);
 						accessStatus.setText("Make Private");
 					}
+
 					accessStatus.pack(); // resize the button
 					client.close();
 				} catch (LoginException e3) {
 					e3.printStackTrace();
 				} catch (StorageException e3) {
-					e3.printStackTrace();
 				} catch (BoaException e1) {
 					e1.printStackTrace();
 					try {
@@ -365,6 +380,85 @@ public class BoaJobDetailsView extends BoaAbstractView {
 					}
 				}
 			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+
+		});
+
+		/*
+		 * Source Code button
+		 */
+		Button viewSourceCode = new Button(container, SWT.PUSH);
+		viewSourceCode.setText("View Source");
+		viewSourceCode.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					File tempFile = File.createTempFile(
+							"boaSource" + System.currentTimeMillis(), ".boa");
+					PrintWriter pw = new PrintWriter(tempFile);
+					pw.write(job.getSource());
+					pw.close();
+
+					IFileStore input = EFS.getLocalFileSystem().getStore(
+							new Path(tempFile.getAbsolutePath()));
+					IDE.openInternalEditorOnFileStore(PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow().getActivePage(), input);
+
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (PartInitException e1) {
+					e1.printStackTrace();
+				} catch (NotLoggedInException e1) {
+					e1.printStackTrace();
+				} catch (BoaException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			/*
+			 * @Override public void widgetSelected(SelectionEvent e) {
+			 * IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			 * IProject project = root.getProject("Boa_Source_Code"); try {
+			 * 
+			 * if (!project.exists()) { project.create(null);
+			 * project.open(null);
+			 * 
+			 * IProjectDescription description = project .getDescription();
+			 * String[] natureIDs = { XtextProjectHelper.NATURE_ID };
+			 * description.setNatureIds(natureIDs);
+			 * 
+			 * IFolder sourceFolder = project.getFolder("src");
+			 * sourceFolder.create(false, true, null); } IFile sourceFile =
+			 * project.getFile("src/Code_" + System.currentTimeMillis() +
+			 * ".boa");
+			 * 
+			 * sourceFile.create(new ByteArrayInputStream(job.getSource()
+			 * .getBytes()), false, null);
+			 * 
+			 * IDE.openEditor(PlatformUI.getWorkbench()
+			 * .getActiveWorkbenchWindow().getActivePage(), sourceFile);
+			 * 
+			 * } catch (CoreException e1) { e1.printStackTrace(); } catch
+			 * (NotLoggedInException e1) { e1.printStackTrace(); } catch
+			 * (BoaException e1) { e1.printStackTrace(); } }
+			 */
+
+			/*
+			 * private String createProjectName(IWorkspaceRoot root) {
+			 * 
+			 * String toReturn = "project_" + System.currentTimeMillis();
+			 * 
+			 * for (IProject project : root.getProjects()) { if
+			 * (project.getName().equalsIgnoreCase(toReturn)) // try again
+			 * toReturn = "project_" + System.currentTimeMillis(); }
+			 * 
+			 * return toReturn; }
+			 */
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
