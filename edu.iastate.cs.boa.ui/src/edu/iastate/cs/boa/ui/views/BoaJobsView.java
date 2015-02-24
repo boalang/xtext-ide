@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.equinox.security.storage.ISecurePreferences;
-import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -52,7 +51,6 @@ import org.eclipse.ui.PlatformUI;
 import edu.iastate.cs.boa.BoaClient;
 import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.JobHandle;
-import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
 import edu.iastate.cs.boa.ui.handlers.OpenBoaView;
 
@@ -75,12 +73,9 @@ public class BoaJobsView extends BoaAbstractView {
 	private Action nextPage;
 	protected static Action refresh;
 	private static int jobsOffsetIndex;
-	ISecurePreferences secureStorage;
-	ISecurePreferences credentials;
 	ISecurePreferences jobURLs;
 	ISecurePreferences forDetailsView;
-	BoaClient client;
-	
+
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -111,11 +106,9 @@ public class BoaJobsView extends BoaAbstractView {
 	}
 
 	public BoaJobsView() {
-		secureStorage = SecurePreferencesFactory.getDefault();
-		credentials = secureStorage.node("/boa/credentials");
+		super();
 		jobURLs = secureStorage.node("/boa/jobURLs");
 		forDetailsView = secureStorage.node("/boa/jobID");
-		client = new BoaClient();
 		jobsOffsetIndex = 0;
 	}
 
@@ -130,15 +123,6 @@ public class BoaJobsView extends BoaAbstractView {
 		String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
 				"Compilation Status", "Execution Status", "Input Dataset" };
 		int[] COLUMN_WIDTHS = { 50, 175, 150, 125, 150 };
-
-		try {
-			client.login(credentials.get("username", ""),
-					credentials.get("password", ""));
-		} catch (final LoginException e) {
-			e.printStackTrace();
-		} catch (final StorageException e) {
-			e.printStackTrace();
-		}
 
 		// Table appearance configuration
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
@@ -178,7 +162,6 @@ public class BoaJobsView extends BoaAbstractView {
 						String.valueOf(jobs.get(i).getDataset()) });
 			}
 			jobURLs.flush();
-			client.close();
 
 		} catch (final NotLoggedInException e) {
 			e.printStackTrace();
@@ -273,14 +256,10 @@ public class BoaJobsView extends BoaAbstractView {
 		nextPage = new Action() {
 			public void run() {
 				try {
-					client.login(credentials.get("username", ""),
-							credentials.get("password", ""));
 
 					if (jobsOffsetIndex + PAGE_SIZE > client.getJobCount()) {
-						client.close();
 						return;
 					}
-					client.close();
 				} catch (final NotLoggedInException e) {
 					e.printStackTrace();
 				} catch (final BoaException e) {
@@ -290,8 +269,6 @@ public class BoaJobsView extends BoaAbstractView {
 					} catch (final BoaException e2) {
 						showMessage("Please restart Eclipse!");
 					}
-				} catch (final StorageException e) {
-					e.printStackTrace();
 				}
 				jobsOffsetIndex += PAGE_SIZE;
 				paginate(jobsOffsetIndex);
@@ -309,32 +286,18 @@ public class BoaJobsView extends BoaAbstractView {
 			public void run() {
 				try {
 
-					client.login(credentials.get("username", ""),
-							credentials.get("password", ""));
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection)
 							.getFirstElement();
 
-					// Cache the job ID selected
+					/* Cache the job ID selected */
 					forDetailsView.putInt("jobID",
 							Integer.valueOf(obj.toString()), false);
-
-					// Open the Job Details view and refresh the table
 					OpenBoaView.openDetailsView();
 					BoaJobDetailsView.refreshTable.run();
 
-					client.close();
 				} catch (final NumberFormatException e) {
 					e.printStackTrace();
-				} catch (final NotLoggedInException e) {
-					e.printStackTrace();
-				} catch (final BoaException e) {
-					e.printStackTrace();
-					try {
-						client.close();
-					} catch (final BoaException e2) {
-						showMessage("Please restart Eclipse!");
-					}
 				} catch (final StorageException e) {
 					e.printStackTrace();
 				}
@@ -351,9 +314,6 @@ public class BoaJobsView extends BoaAbstractView {
 	 */
 	private void paginate(int offset) {
 		try {
-			client.login(credentials.get("username", ""),
-					credentials.get("password", ""));
-
 			viewer.refresh();
 			List<JobHandle> jobs = client.getJobList(offset, PAGE_SIZE);
 
@@ -373,7 +333,6 @@ public class BoaJobsView extends BoaAbstractView {
 						String.valueOf(jobs.get(i).getDataset().getName()) });
 			}
 			jobURLs.flush();
-			client.close();
 
 		} catch (final NotLoggedInException e) {
 			e.printStackTrace();

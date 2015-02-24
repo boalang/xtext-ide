@@ -19,7 +19,6 @@
 package edu.iastate.cs.boa.ui.views;
 
 import org.eclipse.equinox.security.storage.ISecurePreferences;
-import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -49,18 +48,13 @@ public class BoaJobOutputView extends BoaAbstractView {
 	 */
 	public static final String ID = "edu.iastate.cs.boa.ui.views.BoaJobOutput";
 
-	private ISecurePreferences secureStorage;
-	private ISecurePreferences credentials;
 	private ISecurePreferences jobID;
-	BoaClient client;
 	protected static Text output;
 	protected static Action refreshDisplay;
 
 	public BoaJobOutputView() {
-		secureStorage = SecurePreferencesFactory.getDefault();
-		credentials = secureStorage.node("/boa/credentials");
+		super();
 		jobID = secureStorage.node("/boa/jobID");
-		client = new BoaClient();
 	}
 
 	/**
@@ -72,22 +66,15 @@ public class BoaJobOutputView extends BoaAbstractView {
 	 */
 	public void createPartControl(Composite parent) {
 		try {
-			client.login(credentials.get("username", ""),
-					credentials.get("password", ""));
-
 			JobHandle job = client.getJob(jobID.getInt("jobID", 0));
-
 			output = new Text(parent, SWT.WRAP);
-			output.setText("No output to display!"); // default
+			output.setText("No output to display!");
 			String jobOutput = job.getOutput();
-			
-			// Check if the output is substantiative
+
 			if (validJobOutput(jobOutput)) {
 				output.setText(jobOutput);
 			}
-			output.setEditable(false); // don't let the user edit
-
-			client.close();
+			output.setEditable(false);
 		} catch (NotLoggedInException e) {
 			e.printStackTrace();
 		} catch (BoaException e) {
@@ -133,23 +120,13 @@ public class BoaJobOutputView extends BoaAbstractView {
 		refreshDisplay = new Action() {
 			public void run() {
 				try {
-
-					// Populate with default blank file
 					output.setText("");
-
-					client.login(credentials.get("username", ""),
-							credentials.get("password", ""));
-
 					JobHandle job = client.getJob(jobID.getInt("jobID", 0));
+					String jobOutput = job.getOutput();
 
-					String jobOutput = job.getOutput(); // grab output
-
-					// Check if the output is substantiative
 					if (validJobOutput(jobOutput)) {
 						output.setText(jobOutput);
 					}
-
-					client.close();
 				} catch (NotLoggedInException e) {
 					e.printStackTrace();
 				} catch (BoaException e) {
