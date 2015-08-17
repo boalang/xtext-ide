@@ -73,6 +73,9 @@ you would any other Java application.
 
 ## Exporting ##
 
+Before exporting, make sure to bump the version in *both* manifest files and
+the feature.xml file.
+
 In order to properly export the IDE to an Eclipse update site, you need to have
 Eclipse PDE installed:
 
@@ -89,5 +92,11 @@ Then follow these steps:
 1. 'Categorize repository' with a path selecting www/category.xml
 1. hit Finish
 
-If all goes well, the www directory has modified/new files which you git
-add/commit/push and then git pull on the webserver and the update is complete!
+After this, the www directory contains the exported project.  You need to
+update a few files manually:
+
+1. edit www/site.xml to bump the version
+1. edit www/category.xml to bump the version
+
+Then git add/commit/push all changed files in the www directory, and git pull
+the updates to the webserver.
