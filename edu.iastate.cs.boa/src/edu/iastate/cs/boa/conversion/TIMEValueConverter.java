@@ -1,6 +1,7 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, 
- *                 and Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Robert Dyer, 
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,12 +39,12 @@ public class TIMEValueConverter extends AbstractLexerBasedConverter<Long> {
 	public TIMEValueConverter() {
 		super();
 	}
-	
+
 	@Override
 	protected String toEscapedString(Long value) {
 		return value.toString() + "T";
 	}
-	
+
 	public Long toValue(String string, INode node) {
 		if (Strings.isEmpty(string))
 			throw new ValueConverterException("Couldn't convert empty string to a time value.", node, null);

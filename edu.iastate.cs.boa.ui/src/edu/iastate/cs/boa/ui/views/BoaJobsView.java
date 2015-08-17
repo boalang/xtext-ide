@@ -1,7 +1,6 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, Sambhav Srirama,
- *                 Iowa State University of Science and Technology
- *                 and Bowling Green State University
+ * Copyright 2015, Hridesh Rajan, Sambhav Srirama,
+ *                 and Iowa State University of Science and Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.iastate.cs.boa.ui.views;
 
 import java.io.IOException;
@@ -57,9 +55,7 @@ import edu.iastate.cs.boa.ui.handlers.OpenBoaView;
 /**
  * @author ssrirama
  */
-
 public class BoaJobsView extends BoaAbstractView {
-
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
@@ -88,8 +84,7 @@ public class BoaJobsView extends BoaAbstractView {
 		}
 	}
 
-	class ViewLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
+	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
 		}
@@ -162,7 +157,6 @@ public class BoaJobsView extends BoaAbstractView {
 						String.valueOf(jobs.get(i).getDataset()) });
 			}
 			jobURLs.flush();
-
 		} catch (final NotLoggedInException e) {
 			e.printStackTrace();
 		} catch (final BoaException e) {
@@ -206,7 +200,6 @@ public class BoaJobsView extends BoaAbstractView {
 	}
 
 	private void fillLocalPullDown(final IMenuManager manager) {
-
 	}
 
 	private void fillContextMenu(final IMenuManager manager) {
@@ -222,7 +215,6 @@ public class BoaJobsView extends BoaAbstractView {
 	}
 
 	private void makeActions(final BoaClient client) {
-
 		refresh = new Action() {
 			public void run() {
 				jobsOffsetIndex = 0;
@@ -256,10 +248,8 @@ public class BoaJobsView extends BoaAbstractView {
 		nextPage = new Action() {
 			public void run() {
 				try {
-
-					if (jobsOffsetIndex + PAGE_SIZE > client.getJobCount()) {
+					if (jobsOffsetIndex + PAGE_SIZE > client.getJobCount())
 						return;
-					}
 				} catch (final NotLoggedInException e) {
 					e.printStackTrace();
 				} catch (final BoaException e) {
@@ -285,7 +275,6 @@ public class BoaJobsView extends BoaAbstractView {
 		doubleClickAction = new Action() {
 			public void run() {
 				try {
-
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection)
 							.getFirstElement();
@@ -295,7 +284,6 @@ public class BoaJobsView extends BoaAbstractView {
 							Integer.valueOf(obj.toString()), false);
 					OpenBoaView.openDetailsView();
 					BoaJobDetailsView.refreshTable.run();
-
 				} catch (final NumberFormatException e) {
 					e.printStackTrace();
 				} catch (final StorageException e) {
@@ -333,7 +321,6 @@ public class BoaJobsView extends BoaAbstractView {
 						String.valueOf(jobs.get(i).getDataset().getName()) });
 			}
 			jobURLs.flush();
-
 		} catch (final NotLoggedInException e) {
 			e.printStackTrace();
 		} catch (final BoaException e) {

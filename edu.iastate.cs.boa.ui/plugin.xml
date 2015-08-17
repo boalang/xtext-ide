@@ -250,7 +250,9 @@
    <extension
          point="org.eclipse.xtext.builder.participant">
       <participant
-            class="edu.iastate.cs.boa.ui.BoaExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
+            class="edu.iastate.cs.boa.ui.BoaExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
+            fileExtensions="boa"
+            >
       </participant>
    </extension>
    <extension
@@ -277,6 +279,27 @@
 	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
         </page>
     </extension>
+    <extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="popup:#TextEditorContext?after=xtext.ui.openDeclaration">
+			<command
+				commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand"
+				id="edu.iastate.cs.boa.Boa.OpenGeneratedCode"
+				style="push">
+					<visibleWhen checkEnabled="false">
+						<reference definitionId="edu.iastate.cs.boa.Boa.Editor.opened" />
+					</visibleWhen>
+			</command>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.handlers">
+		<handler
+			class="edu.iastate.cs.boa.ui.BoaExecutableExtensionFactory:org.eclipse.xtext.ui.generator.trace.OpenGeneratedFileHandler"
+			commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand">
+				<activeWhen>
+					<reference definitionId="edu.iastate.cs.boa.Boa.Editor.opened" />
+				</activeWhen>
+		</handler>
+	</extension>
 
 	<!-- Quick Outline -->
 	<extension
@@ -392,6 +415,12 @@
             extensions="boa">
     </provider>
   </extension>
+  <extension point="org.eclipse.team.core.fileTypes">
+    <fileTypes
+            extension="boa"
+            type="text">
+    </fileTypes>
+  </extension>
 
    <extension
          point="org.eclipse.ui.newWizards">
@@ -415,11 +444,7 @@
             name="Boa File">
       </wizard>
    </extension>
-   
-   
-   
-   
-   
+
    <extension
          point="org.eclipse.ui.commands">
       <category
@@ -442,6 +467,7 @@
             name="View Submitted Jobs">
       </command>
    </extension>
+
    <extension
          point="org.eclipse.ui.handlers">
       <handler
@@ -457,6 +483,7 @@
             commandId="edu.iastate.cs.boa.ui.commands.openBoaView">
       </handler>
    </extension>
+
    <extension
          point="org.eclipse.ui.bindings">
       <key
@@ -466,6 +493,7 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
    </extension>
+
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -503,6 +531,7 @@
          </toolbar>
       </menuContribution>
    </extension>
+
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
@@ -515,12 +544,14 @@
          </view>
       </perspectiveExtension>
    </extension>
+
    <extension
          point="org.eclipse.help.contexts">
       <contexts
             file="contexts.xml">
       </contexts>
    </extension>
+
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -552,8 +583,8 @@
             restorable="true">
       </view>
    </extension>
+
    <extension
          point="org.eclipse.compare.structureCreators">
    </extension>
-
 </plugin>

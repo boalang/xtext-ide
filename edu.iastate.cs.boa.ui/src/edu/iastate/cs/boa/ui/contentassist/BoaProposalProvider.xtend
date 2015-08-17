@@ -1,6 +1,7 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, 
- *                 and Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Robert Dyer,
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +20,9 @@ package edu.iastate.cs.boa.ui.contentassist
 import edu.iastate.cs.boa.ui.contentassist.AbstractBoaProposalProvider
 
 /**
- * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
- * 
+ * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#content-assist
+ * on how to customize the content assistant.
+ *
  * @author rdyer
  */
 class BoaProposalProvider extends AbstractBoaProposalProvider {

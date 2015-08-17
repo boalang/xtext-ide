@@ -1,6 +1,7 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, 
- *                 and Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Robert Dyer, 
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +32,7 @@ public class LONGValueConverter extends AbstractLexerBasedConverter<Long> {
 	protected String toEscapedString(Long value) {
 		return value.toString();
 	}
-	
+
 	public Long toValue(String string, INode node) {
 		if (Strings.isEmpty(string))
 			throw new ValueConverterException("Couldn't convert empty string to a long value.", node, null);

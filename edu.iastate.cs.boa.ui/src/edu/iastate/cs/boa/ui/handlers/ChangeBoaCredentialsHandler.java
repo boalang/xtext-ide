@@ -1,6 +1,7 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, Sambhav Srirama,
- *                 Iowa State University of Science and Technology
+/*
+ * Copyright 2015, Hridesh Rajan, Robert Dyer, Sambhav Srirama,
+ *                 Iowa State University of Science and Technology,
  *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +34,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import edu.iastate.cs.boa.ui.dialogs.PasswordDialog;
 
+/**
+ * @author ssrirama
+ * @author rdyer
+ */
 public class ChangeBoaCredentialsHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
     	promptUser(event);

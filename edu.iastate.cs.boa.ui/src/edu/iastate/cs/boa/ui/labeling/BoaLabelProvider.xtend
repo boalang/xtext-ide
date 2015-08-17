@@ -1,6 +1,7 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, 
- *                 and Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Robert Dyer,
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +20,10 @@ package edu.iastate.cs.boa.ui.labeling
 import com.google.inject.Inject
 
 /**
- * Provides labels for a EObjects.
+ * Provides labels for EObjects.
  *
- * see http://www.eclipse.org/Xtext/documentation.html#labelProvider
- * 
+ * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider
+ *
  * @author rdyer
  */
 class BoaLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider {

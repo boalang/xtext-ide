@@ -1,6 +1,6 @@
 /*
- * Copyright 2014, Hridesh Rajan, Sambhav Srirama, 
- *                 and Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Sambhav Srirama,
+ *                 and Iowa State University of Science and Technology,
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * The "New" wizard page allows setting the container for the new file as well
  * as the file name. The page will only accept file name without the extension
  * OR with the extension that matches the expected one (boa).
- * 
+ *
  * @author sambhav
  */
 public class BoaNewFileWizardPage extends WizardPage {
@@ -107,7 +107,6 @@ public class BoaNewFileWizardPage extends WizardPage {
 	/**
 	 * Tests if the current workbench selection is a suitable container to use.
 	 */
-
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false
 				&& selection instanceof IStructuredSelection) {
@@ -131,7 +130,6 @@ public class BoaNewFileWizardPage extends WizardPage {
 	 * Uses the standard container selection dialog to choose the new value for
 	 * the container field.
 	 */
-
 	private void handleBrowse() {
 		final ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
@@ -146,7 +144,6 @@ public class BoaNewFileWizardPage extends WizardPage {
 	/**
 	 * Ensures that both text fields are set.
 	 */
-
 	private void dialogChanged() {
 		final IResource container = ResourcesPlugin.getWorkspace().getRoot()
 				.findMember(new Path(getContainerName()));

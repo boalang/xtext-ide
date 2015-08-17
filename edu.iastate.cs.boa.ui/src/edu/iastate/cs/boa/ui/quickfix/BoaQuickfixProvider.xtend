@@ -1,5 +1,5 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, 
+ * Copyright 2015, Hridesh Rajan, Robert Dyer,
  *                 Iowa State University of Science and Technology,
  *                 and Bowling Green State University
  *
@@ -28,8 +28,8 @@ import edu.iastate.cs.boa.boa.Block
 /**
  * Custom quickfixes.
  *
- * see http://www.eclipse.org/Xtext/documentation.html#quickfixes
- * 
+ * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#quick-fixes
+ *
  * @author rdyer
  */
 class BoaQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {

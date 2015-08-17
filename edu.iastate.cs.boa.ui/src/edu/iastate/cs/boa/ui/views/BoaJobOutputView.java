@@ -1,7 +1,6 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, Sambhav Srirama,
- *                 Iowa State University of Science and Technology
- *                 and Bowling Green State University
+ * Copyright 2015, Hridesh Rajan, Sambhav Srirama,
+ *                 and Iowa State University of Science and Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.iastate.cs.boa.ui.views;
 
 import org.eclipse.equinox.security.storage.ISecurePreferences;
@@ -40,9 +38,7 @@ import edu.iastate.cs.boa.NotLoggedInException;
 /**
  * @author ssrirama
  */
-
 public class BoaJobOutputView extends BoaAbstractView {
-
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
@@ -106,7 +102,6 @@ public class BoaJobOutputView extends BoaAbstractView {
 	}
 
 	private void fillLocalPullDown(final IMenuManager manager) {
-
 	}
 
 	private void fillContextMenu(final IMenuManager manager) {
@@ -148,13 +143,11 @@ public class BoaJobOutputView extends BoaAbstractView {
 	}
 
 	private void hookDoubleClickAction() {
-
 	}
 
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-
 	}
 }

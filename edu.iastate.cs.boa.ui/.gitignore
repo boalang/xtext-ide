@@ -1,4 +1,5 @@
 xtend-gen/edu/
 src-gen/edu/
 bin/
+.settings/
 plugin.xml_gen

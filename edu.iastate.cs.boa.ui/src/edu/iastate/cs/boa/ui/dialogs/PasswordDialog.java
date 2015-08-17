@@ -1,6 +1,6 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer,
- *                 Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Robert Dyer, 
+ *                 Iowa State University of Science and Technology,
  *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

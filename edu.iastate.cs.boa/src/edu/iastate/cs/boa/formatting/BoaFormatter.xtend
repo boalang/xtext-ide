@@ -1,6 +1,7 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, 
- *                 and Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Robert Dyer, 
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +28,11 @@ import edu.iastate.cs.boa.services.BoaGrammarAccess
 /**
  * This class contains Boa's formatting description.
  *
- * see : http://www.eclipse.org/Xtext/documentation.html#formatting
- * on how and when to use it
- * 
+ * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#formatting
+ * on how and when to use it.
+ *
+ * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
+ *
  * @author rdyer
  */
 class BoaFormatter extends AbstractDeclarativeFormatter {

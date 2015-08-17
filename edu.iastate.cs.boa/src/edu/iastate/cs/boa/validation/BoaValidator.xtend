@@ -1,5 +1,5 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, 
+ * Copyright 2015, Hridesh Rajan, Robert Dyer, 
  *                 Iowa State University of Science and Technology,
  *                 and Bowling Green State University
  *
@@ -23,7 +23,7 @@ import org.eclipse.xtext.validation.ComposedChecks
  * Custom validation rules.
  *
  * see http://www.eclipse.org/Xtext/documentation.html#validation
- * 
+ *
  * @author rdyer
  */
 @ComposedChecks(validators = #[typeof(BoaFunctionValidator)])

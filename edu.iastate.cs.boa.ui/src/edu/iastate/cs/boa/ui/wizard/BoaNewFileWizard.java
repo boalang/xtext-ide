@@ -1,6 +1,7 @@
 /*
- * Copyright 2014, Hridesh Rajan, Sambhav Srirama, Robert Dyer,
- *                 and Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Robert Dyer, Sambhav Srirama,
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +45,7 @@ import org.eclipse.ui.ide.IDE;
  * "boa". If a sample multi-page editor (also available
  * as a template) is registered for the same extension, it will
  * be able to open it.
- * 
+ *
  * @author sambhav
  * @author rdyer
  */
@@ -56,7 +57,7 @@ public class BoaNewFileWizard extends Wizard implements INewWizard {
 		super();
 		setNeedsProgressMonitor(true);
 	}
-	
+
 	/**
 	 * Adding the page to the wizard.
 	 */
@@ -95,7 +96,7 @@ public class BoaNewFileWizard extends Wizard implements INewWizard {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * The worker method. It will find the container, create the
 	 * file if missing or just replace its contents, and open
@@ -132,7 +133,7 @@ public class BoaNewFileWizard extends Wizard implements INewWizard {
 		});
 		monitor.worked(1);
 	}
-	
+
 	/**
 	 * We will initialize file contents with a sample text.
 	 */

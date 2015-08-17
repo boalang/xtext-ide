@@ -10,6 +10,9 @@ download it here:
 
 [http://www.eclipse.org/Xtext/download.html](http://www.eclipse.org/Xtext/download.html)
 
+Currently tested with this version:
+Xtext Complete SDK	2.8.4.v201508050135	org.eclipse.xtext.sdk.feature.group
+
 After checking out this project, make sure you run setup.sh to create some
 necessary (empty) directories!  Otherwise Eclipse will refuse to build the
 projects.
@@ -66,3 +69,25 @@ Since the IDE is just Java code, you can also choose to debug it.
 This will launch the IDE in a separate Eclipse instance.  You can use the
 original instance to debug it, by setting breakpoints, pausing it, etc just as
 you would any other Java application.
+
+
+## Exporting ##
+
+In order to properly export the IDE to an Eclipse update site, you need to have
+Eclipse PDE installed:
+
+Eclipse Plug-in Development Environment	3.11.0.v20150603-2000	org.eclipse.pde.feature.group
+
+Then follow these steps:
+
+1. select the edu.iastate.cs.boa.sdk project
+1. choose File -> Export
+1. choose 'Deployable features'
+1. select the www directory
+1. make sure 'Package as individual JAR archives' is checked
+1. make sure 'Generate p2 repository' is checked
+1. 'Categorize repository' with a path selecting www/category.xml
+1. hit Finish
+
+If all goes well, the www directory has modified/new files which you git
+add/commit/push and then git pull on the webserver and the update is complete!

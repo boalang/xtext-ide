@@ -1,6 +1,7 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, 
- *                 and Iowa State University of Science and Technology
+ * Copyright 2015, Hridesh Rajan, Robert Dyer, 
+ *                 Iowa State University of Science and Technology,
+ *                 and Bowling Green State University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +25,7 @@ import edu.iastate.cs.boa.scoping.BoaScopeProvider;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
- * 
+ *
  * @author rdyer
  */
 public class BoaRuntimeModule extends edu.iastate.cs.boa.AbstractBoaRuntimeModule {

@@ -1,7 +1,6 @@
 /*
- * Copyright 2014, Hridesh Rajan, Robert Dyer, Sambhav Srirama,
- *                 Iowa State University of Science and Technology
- *                 and Bowling Green State University
+ * Copyright 2015, Hridesh Rajan, Sambhav Srirama,
+ *                 and Iowa State University of Science and Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,16 +58,13 @@ import org.eclipse.ui.ide.IDE;
 
 import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.JobHandle;
-import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
 import edu.iastate.cs.boa.ui.handlers.OpenBoaView;
 
 /**
  * @author ssrirama
  */
-
 public class BoaJobDetailsView extends BoaAbstractView {
-
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
@@ -92,8 +88,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		}
 	}
 
-	class ViewLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
+	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
 		}
@@ -129,7 +124,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		final int[] COLUMN_WIDTHS = { 50, 175, 125, 105, 125 };
 
 		try {
-
 			viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
 					| SWT.V_SCROLL);
 			viewer.setContentProvider(new ViewContentProvider());
@@ -160,7 +154,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 					String.valueOf(job.getCompilerStatus()),
 					String.valueOf(job.getExecutionStatus()),
 					String.valueOf(job.getDataset()) });
-
 		} catch (StorageException e) {
 			e.printStackTrace();
 		} catch (NotLoggedInException e) {
@@ -183,11 +176,9 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		Button stop = new Button(container, SWT.PUSH);
 		stop.setText("Stop");
 		stop.addSelectionListener(new SelectionListener() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-
 					job.stop();
 					refreshTable.run();
 					showMessage("Job has been stopped!");
@@ -209,9 +200,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-
 			}
-
 		});
 
 		/*
@@ -220,7 +209,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		Button delete = new Button(container, SWT.PUSH);
 		delete.setText("Delete");
 		delete.addSelectionListener(new SelectionListener() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
@@ -242,9 +230,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-
 			}
-
 		});
 
 		/*
@@ -253,7 +239,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		Button resubmit = new Button(container, SWT.PUSH);
 		resubmit.setText("Resubmit");
 		resubmit.addSelectionListener(new SelectionListener() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
@@ -274,9 +259,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-
 			}
-
 		});
 
 		/*
@@ -293,7 +276,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-
 			}
 		});
 
@@ -346,7 +328,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-
 			}
 		});
 		*/
@@ -370,7 +351,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							new Path(tempFile.getAbsolutePath()));
 					IDE.openInternalEditorOnFileStore(PlatformUI.getWorkbench()
 							.getActiveWorkbenchWindow().getActivePage(), input);
-
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				} catch (PartInitException e1) {
@@ -384,7 +364,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-
 			}
 		});
 
@@ -416,7 +395,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -455,7 +433,6 @@ public class BoaJobDetailsView extends BoaAbstractView {
 						String.valueOf(job.getCompilerStatus()),
 						String.valueOf(job.getExecutionStatus()),
 						String.valueOf(job.getDataset().getName()) });
-
 			}
 		};
 		refreshTable.setToolTipText("Refresh");
