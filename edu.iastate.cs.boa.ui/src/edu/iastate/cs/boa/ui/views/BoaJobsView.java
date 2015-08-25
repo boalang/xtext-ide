@@ -62,6 +62,9 @@ public class BoaJobsView extends BoaAbstractView {
 	 */
 	public static final String ID = "edu.iastate.cs.boa.ui.views.BoaJobs";
 
+	/**
+	 * The number of jobs to display per page
+	 */
 	private static final int PAGE_SIZE = 10;
 
 	private TableViewer viewer;
@@ -69,8 +72,23 @@ public class BoaJobsView extends BoaAbstractView {
 	private Action prevPage;
 	private Action nextPage;
 	public static Action refresh;
+
+	/**
+	 * Used for keeping track of which job (plus the ten jobs after it) is
+	 * currently being viewed
+	 */
 	private static int jobsOffsetIndex;
+
+	/**
+	 * Is used so that the SubmitToBoaHandler has the URL of the current job.
+	 * This is so that it can display the webpage in an in-Eclipse tab
+	 */
 	private ISecurePreferences jobURLs;
+
+	/**
+	 * Job IDs stored using this mechanism will be fetched by the
+	 * BoaJobsDetailsView in order to display the most recently accessed job
+	 */
 	private ISecurePreferences forDetailsView;
 
 	class ViewContentProvider implements IStructuredContentProvider {
@@ -159,6 +177,10 @@ public class BoaJobsView extends BoaAbstractView {
 		contributeToActionBars();
 	}
 
+	/**
+	 * Registers this plugin with Eclipse and configures the context menu
+	 * manager so we can add items to it later.
+	 */
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
@@ -172,6 +194,9 @@ public class BoaJobsView extends BoaAbstractView {
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
+	/**
+	 * Standard Eclipse configuration stuff, we don't mess with this.
+	 */
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
@@ -181,18 +206,40 @@ public class BoaJobsView extends BoaAbstractView {
 	private void fillLocalPullDown(final IMenuManager manager) {
 	}
 
+	/**
+	 * Adds items to the context menu manager so that "previous", "next", and
+	 * "refresh" show up when a user right clicks
+	 * 
+	 * @param manager
+	 *            The manager that we add menu items to
+	 */
 	private void fillContextMenu(final IMenuManager manager) {
 		manager.add(prevPage);
 		manager.add(nextPage);
 		manager.add(refresh);
 	}
-
+	/**
+	 * Adds items to the toolbar manager so that "previous", "next", and
+	 * "refresh" show up in the toolbar
+	 * 
+	 * @param manager
+	 *            The manager that we add toolbar items to
+	 */
 	private void fillLocalToolBar(final IToolBarManager manager) {
 		manager.add(prevPage);
 		manager.add(nextPage);
 		manager.add(refresh);
 	}
 
+	/**
+	 * Configures the "previous", "next", and "refresh" buttons such that
+	 * pressing them will, respectively, display the previous 10 jobs, the next
+	 * 10 jobs, or reset the view to the first 10 jobs available.
+	 * 
+	 * @param client
+	 *            The inherited BoaClient object. It should already be logged in
+	 *            with a valid session.
+	 */
 	private void makeActions(final BoaClient client) {
 		refresh = new Action() {
 			public void run() {
