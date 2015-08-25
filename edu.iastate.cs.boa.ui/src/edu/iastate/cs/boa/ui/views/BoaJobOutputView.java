@@ -73,6 +73,10 @@ public class BoaJobOutputView extends BoaAbstractView {
 		contributeToActionBars();
 	}
 
+	/**
+	 * Registers this plugin with Eclipse and configures the context menu
+	 * manager so we can add items to it later.
+	 */
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
@@ -83,6 +87,9 @@ public class BoaJobOutputView extends BoaAbstractView {
 		});
 	}
 
+	/**
+	 * Standard Eclipse configuration stuff, we don't mess with this.
+	 */
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
@@ -95,10 +102,26 @@ public class BoaJobOutputView extends BoaAbstractView {
 	private void fillContextMenu(final IMenuManager manager) {
 	}
 
+	/**
+	 * Adds items to the toolbar manager so that "refresh" and "visualize" show
+	 * up in the toolbar
+	 * 
+	 * @param manager
+	 *            The manager that we add toolbar items to
+	 */
 	private void fillLocalToolBar(final IToolBarManager manager) {
 		manager.add(refreshDisplay);
 	}
 
+	/**
+	 * Configures the "refresh" button and "visualize" button such that pressing
+	 * them will, respectively, fetch the latest job ID from the cache to
+	 * display it's output, and open the Boa Visualizations view.
+	 * 
+	 * @param client
+	 *            The inherited BoaClient object. It should already be logged in
+	 *            with a valid session.
+	 */
 	private void makeActions(final BoaClient client) {
 		refreshDisplay = new Action() {
 			@Override
@@ -145,6 +168,9 @@ public class BoaJobOutputView extends BoaAbstractView {
 		return input != null && input.length() > 0;
 	}
 
+	/**
+	 * Configures the behavior of the action taken when a user double-clicks.
+	 */
 	private void hookDoubleClickAction() {
 	}
 
