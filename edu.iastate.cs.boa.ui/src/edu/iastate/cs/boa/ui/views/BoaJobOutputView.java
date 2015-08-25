@@ -25,6 +25,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
@@ -61,25 +62,12 @@ public class BoaJobOutputView extends BoaAbstractView {
 	 *            The parent GUI object
 	 */
 	public void createPartControl(Composite parent) {
-		try {
-			JobHandle job = client.getJob(jobID.getInt("jobID", 0));
-			output = new Text(parent, SWT.WRAP);
-			output.setText("No output to display!");
-			String jobOutput = job.getOutput();
-
-			if (validJobOutput(jobOutput)) {
-				output.setText(jobOutput);
-			}
-			output.setEditable(false);
-		} catch (NotLoggedInException e) {
-			e.printStackTrace();
-		} catch (BoaException e) {
-			e.printStackTrace();
-		} catch (StorageException e) {
-			e.printStackTrace();
-		}
+		output = new Text(parent, SWT.WRAP);
+		output.setText("Attempting to fetch output now...");
 
 		makeActions(client);
+		refreshDisplay.run(); // populate view
+
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
@@ -113,29 +101,44 @@ public class BoaJobOutputView extends BoaAbstractView {
 
 	private void makeActions(final BoaClient client) {
 		refreshDisplay = new Action() {
+			@Override
 			public void run() {
-				try {
-					output.setText("");
-					JobHandle job = client.getJob(jobID.getInt("jobID", 0));
-					String jobOutput = job.getOutput();
-
-					if (validJobOutput(jobOutput)) {
-						output.setText(jobOutput);
-					}
-				} catch (NotLoggedInException e) {
-					e.printStackTrace();
-				} catch (BoaException e) {
-					e.printStackTrace();
-				} catch (StorageException e) {
-					e.printStackTrace();
-				}
-
+				Runnable displayOutput = new ThreadToDisplayOutput();
+				Display.getDefault().asyncExec(displayOutput);
 			}
 		};
 		refreshDisplay.setToolTipText("Refresh");
-		refreshDisplay.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+		refreshDisplay.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+	}
+
+	public class ThreadToDisplayOutput implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				int id = jobID.getInt("jobID", 0);
+				output.setText("Downloading job output now...");
+				JobHandle job = client.getJob(id);
+				String jobOutput = job.getOutput();
+
+				if (validJobOutput(jobOutput)) {
+					output.setText(jobOutput);
+				} else {
+					output.setText("Empty or null output");
+				}
+
+				output.setEditable(false);
+			} catch (NotLoggedInException e) {
+				e.printStackTrace();
+			} catch (BoaException e) {
+				e.printStackTrace();
+			} catch (StorageException e) {
+				e.printStackTrace();
+			}
+
+		}
+
 	}
 
 	private boolean validJobOutput(String input) {
