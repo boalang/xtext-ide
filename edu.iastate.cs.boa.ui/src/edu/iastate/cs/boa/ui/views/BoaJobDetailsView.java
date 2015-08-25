@@ -434,6 +434,10 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		contributeToActionBars();
 	}
 
+	/**
+	 * Registers this plugin with Eclipse and configures the context menu
+	 * manager so we can add items to it later.
+	 */
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
@@ -447,6 +451,9 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
+	/**
+	 * Standard Eclipse configuration stuff, we don't mess with this.
+	 */
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
@@ -459,10 +466,25 @@ public class BoaJobDetailsView extends BoaAbstractView {
 	private void fillContextMenu(IMenuManager manager) {
 	}
 
+	/**
+	 * Adds items to the toolbar manager so that "refresh" shows up in the
+	 * toolbar
+	 * 
+	 * @param manager
+	 *            The manager that we add toolbar items to
+	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(refreshTable);
 	}
 
+	/**
+	 * Configures the "refresh" button such that pressing it will fetch the
+	 * latest job ID from the cache and display it's details
+	 * 
+	 * @param client
+	 *            The inherited BoaClient object. It should already be logged in
+	 *            with a valid session.
+	 */
 	private void makeActions() {
 		refreshTable = new Action() {
 			public void run() {
@@ -505,6 +527,9 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		};
 	}
 
+	/**
+	 * Configures the behavior of the action taken when a user double-clicks.
+	 */
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
