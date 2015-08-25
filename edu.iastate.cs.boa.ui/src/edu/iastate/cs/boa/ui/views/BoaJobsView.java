@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -61,16 +62,34 @@ public class BoaJobsView extends BoaAbstractView {
 	 */
 	public static final String ID = "edu.iastate.cs.boa.ui.views.BoaJobs";
 
+	/**
+	 * The number of jobs to display per page
+	 */
 	private static final int PAGE_SIZE = 10;
 
 	private TableViewer viewer;
 	private Action doubleClickAction;
 	private Action prevPage;
 	private Action nextPage;
-	protected static Action refresh;
+	public static Action refresh;
+
+	/**
+	 * Used for keeping track of which job (plus the ten jobs after it) is
+	 * currently being viewed
+	 */
 	private static int jobsOffsetIndex;
-	ISecurePreferences jobURLs;
-	ISecurePreferences forDetailsView;
+
+	/**
+	 * Is used so that the SubmitToBoaHandler has the URL of the current job.
+	 * This is so that it can display the webpage in an in-Eclipse tab
+	 */
+	private ISecurePreferences jobURLs;
+
+	/**
+	 * Job IDs stored using this mechanism will be fetched by the
+	 * BoaJobsDetailsView in order to display the most recently accessed job
+	 */
+	private ISecurePreferences forDetailsView;
 
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
@@ -115,13 +134,17 @@ public class BoaJobsView extends BoaAbstractView {
 	 *            The parent GUI object
 	 */
 	public void createPartControl(Composite parent) {
-		String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
-				"Compilation Status", "Execution Status", "Input Dataset" };
+		// if(true == true){
+		// debuggerJobsStorage.clear();
+		// return;
+		// }
+		
+		String[] COLUMN_NAMES = { "Job ID", "Date Submitted", "Compilation Status", "Execution Status",
+				"Input Dataset" };
 		int[] COLUMN_WIDTHS = { 50, 175, 150, 125, 150 };
 
 		// Table appearance configuration
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
@@ -139,47 +162,25 @@ public class BoaJobsView extends BoaAbstractView {
 			column.setData(COLUMN_NAMES[i]);
 		}
 
-		try {
-			List<JobHandle> jobs = client
-					.getJobList(jobsOffsetIndex, PAGE_SIZE);
-			for (int i = 0; i < jobs.size(); i++) {
-				// Cache the job URL
-				jobURLs.put(String.valueOf(jobs.get(i).getId()), jobs.get(i)
-						.getUrl().toString(), false);
-				TableItem item = new TableItem(viewer.getTable(), SWT.CENTER);
-				item.setData(String.valueOf(jobs.get(i).getId()));
-				item.setText(new String[] {
-						// Here is where we populate columns
-						String.valueOf(jobs.get(i).getId()),
-						String.valueOf(jobs.get(i).getDate()),
-						String.valueOf(jobs.get(i).getCompilerStatus()),
-						String.valueOf(jobs.get(i).getExecutionStatus()),
-						String.valueOf(jobs.get(i).getDataset()) });
+		/* Populate table with 10 most recent jobs */
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				paginate(0);
 			}
-			jobURLs.flush();
-		} catch (final NotLoggedInException e) {
-			e.printStackTrace();
-		} catch (final BoaException e) {
-			e.printStackTrace();
-			try {
-				client.close();
-			} catch (final BoaException e2) {
-				showMessage("Please restart Eclipse!");
-			}
-		} catch (final StorageException e) {
-			e.printStackTrace();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
+		});
 
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
 		makeActions(client);
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
 	}
 
+	/**
+	 * Registers this plugin with Eclipse and configures the context menu
+	 * manager so we can add items to it later.
+	 */
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
@@ -193,6 +194,9 @@ public class BoaJobsView extends BoaAbstractView {
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
+	/**
+	 * Standard Eclipse configuration stuff, we don't mess with this.
+	 */
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
@@ -202,30 +206,59 @@ public class BoaJobsView extends BoaAbstractView {
 	private void fillLocalPullDown(final IMenuManager manager) {
 	}
 
+	/**
+	 * Adds items to the context menu manager so that "previous", "next", and
+	 * "refresh" show up when a user right clicks
+	 * 
+	 * @param manager
+	 *            The manager that we add menu items to
+	 */
 	private void fillContextMenu(final IMenuManager manager) {
 		manager.add(prevPage);
 		manager.add(nextPage);
 		manager.add(refresh);
 	}
-
+	/**
+	 * Adds items to the toolbar manager so that "previous", "next", and
+	 * "refresh" show up in the toolbar
+	 * 
+	 * @param manager
+	 *            The manager that we add toolbar items to
+	 */
 	private void fillLocalToolBar(final IToolBarManager manager) {
 		manager.add(prevPage);
 		manager.add(nextPage);
 		manager.add(refresh);
 	}
 
+	/**
+	 * Configures the "previous", "next", and "refresh" buttons such that
+	 * pressing them will, respectively, display the previous 10 jobs, the next
+	 * 10 jobs, or reset the view to the first 10 jobs available.
+	 * 
+	 * @param client
+	 *            The inherited BoaClient object. It should already be logged in
+	 *            with a valid session.
+	 */
 	private void makeActions(final BoaClient client) {
 		refresh = new Action() {
 			public void run() {
 				jobsOffsetIndex = 0;
 				jobURLs.clear();
-				paginate(jobsOffsetIndex);
+
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						paginate(jobsOffsetIndex);
+					}
+				});
+
 			}
 		};
 		refresh.setText("Refresh");
 		refresh.setToolTipText("Refresh");
-		refresh.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+		refresh.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 
 		prevPage = new Action() {
 			public void run() {
@@ -234,7 +267,13 @@ public class BoaJobsView extends BoaAbstractView {
 				} else {
 					jobsOffsetIndex -= PAGE_SIZE;
 				}
-				paginate(jobsOffsetIndex);
+
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						paginate(jobsOffsetIndex);
+					}
+				});
 			}
 		};
 		prevPage.setText("Previous Page");
@@ -242,8 +281,8 @@ public class BoaJobsView extends BoaAbstractView {
 		prevPage.setActionDefinitionId("Prev Page");
 		prevPage.setDescription("Go to previous page of Boa jobs");
 		prevPage.setId("Previous Boa Jobs Page");
-		prevPage.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+		prevPage.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 
 		nextPage = new Action() {
 			public void run() {
@@ -261,7 +300,12 @@ public class BoaJobsView extends BoaAbstractView {
 					}
 				}
 				jobsOffsetIndex += PAGE_SIZE;
-				paginate(jobsOffsetIndex);
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						paginate(jobsOffsetIndex);
+					}
+				});
 			}
 		};
 		nextPage.setText("Next Page");
@@ -269,19 +313,17 @@ public class BoaJobsView extends BoaAbstractView {
 		nextPage.setActionDefinitionId("Next Page");
 		nextPage.setDescription("Go to next page of Boa jobs");
 		nextPage.setId("Next Boa Jobs Page");
-		nextPage.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+		nextPage.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 
 		doubleClickAction = new Action() {
 			public void run() {
 				try {
 					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection)
-							.getFirstElement();
+					Object obj = ((IStructuredSelection) selection).getFirstElement();
 
 					/* Cache the job ID selected */
-					forDetailsView.putInt("jobID",
-							Integer.valueOf(obj.toString()), false);
+					forDetailsView.putInt("jobID", Integer.valueOf(obj.toString()), false);
 					OpenBoaView.openDetailsView();
 					BoaJobDetailsView.refreshTable.run();
 				} catch (final NumberFormatException e) {
@@ -307,18 +349,10 @@ public class BoaJobsView extends BoaAbstractView {
 
 			for (int i = 0; i < jobs.size(); i++) {
 				// Cache the job URL
-				jobURLs.put(String.valueOf(jobs.get(i).getId()), jobs.get(i)
-						.getUrl().toString(), false);
+				jobURLs.put(String.valueOf(jobs.get(i).getId()), jobs.get(i).getUrl().toString(), false);
 
-				TableItem item = new TableItem(viewer.getTable(), SWT.CENTER);
-				item.setData(String.valueOf(jobs.get(i).getId()));
-				item.setText(new String[] {
-						// Here is where we populate columns
-						String.valueOf(jobs.get(i).getId()),
-						String.valueOf(jobs.get(i).getDate()),
-						String.valueOf(jobs.get(i).getCompilerStatus()),
-						String.valueOf(jobs.get(i).getExecutionStatus()),
-						String.valueOf(jobs.get(i).getDataset().getName()) });
+				Runnable update = new ThreadToUpdateJobList(i, jobs.get(i));
+				Display.getDefault().asyncExec(update);
 			}
 			jobURLs.flush();
 		} catch (final NotLoggedInException e) {
@@ -334,6 +368,34 @@ public class BoaJobsView extends BoaAbstractView {
 			e.printStackTrace();
 		} catch (final IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public class ThreadToUpdateJobList implements Runnable {
+		public TableItem item;
+		public JobHandle job;
+		public int iter;
+
+		public ThreadToUpdateJobList(int i, JobHandle job) {
+			this.job = job;
+			this.iter = i;
+		}
+
+		public ThreadToUpdateJobList() {
+		}
+
+		public void run() {
+			if (iter == 0) {
+				viewer.refresh();
+			}
+			this.item = new TableItem(viewer.getTable(), SWT.CENTER);
+			item.setData(String.valueOf(job.getId()));
+			item.setText(new String[] {
+					// Here is where we populate columns
+					String.valueOf(job.getId()), String.valueOf(job.getDate()),
+					String.valueOf(job.getId() < 0 ? "FINISHED" : job.getCompilerStatus()),
+					String.valueOf(job.getExecutionStatus()),
+					String.valueOf(job.getId() < 0 ? "2013 September (small)" : job.getDataset()) });
 		}
 	}
 
