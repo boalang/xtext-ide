@@ -19,6 +19,7 @@ package edu.iastate.cs.boa.ui.views;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -58,6 +59,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import edu.iastate.cs.boa.BoaException;
+import edu.iastate.cs.boa.CompileStatus;
+import edu.iastate.cs.boa.ExecutionStatus;
 import edu.iastate.cs.boa.JobHandle;
 import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
@@ -144,8 +147,17 @@ public class BoaJobDetailsView extends BoaAbstractView {
 			}
 
 			TableItem item = new TableItem(viewer.getTable(), SWT.CENTER);
-
-			job = client.getJob(jobID.getInt("jobID", 0));
+			int id = jobID.getInt("jobID", 0);
+			if (id == 0) {
+				item.setData(0);
+				item.setText(new String[] {
+						// Here is where we populate columns
+						String.valueOf(0), String.valueOf(new Date()), String.valueOf(CompileStatus.ERROR),
+						String.valueOf(ExecutionStatus.ERROR), String.valueOf("UNKNOWN") });
+				showMessage("No job selected or unable to fetch job information");
+				return;
+			}
+			job = client.getJob(id);
 
 			item.setData(job.getId());
 			item.setText(new String[] {
@@ -231,12 +243,15 @@ public class BoaJobDetailsView extends BoaAbstractView {
 						try {
 							job.delete();
 							viewer.refresh();
+							jobID.putInt("jobID", 0, false);
 							BoaJobsView.refresh.run();
 							showMessage("Delete command has been sent!");
 						} catch (NotLoggedInException e1) {
 							e1.printStackTrace();
 						} catch (BoaException e1) {
 							e1.printStackTrace();
+						} catch (StorageException e) {
+							e.printStackTrace();
 						}
 					}
 				}
@@ -396,7 +411,12 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							File tempFile = File.createTempFile("boaSource" + System.currentTimeMillis(), ".boa");
 							PrintWriter pw = new PrintWriter(tempFile);
 							pw.write("# " + tempFile.getAbsolutePath() + "\n");
-							pw.write(job.getSource()); // write code to file
+							String sourceCode = job.getSource();
+							if (validString(sourceCode)) {
+								pw.write(job.getSource()); // write code to file
+							} else {
+								pw.write("Unable to fetch source code");
+							}
 							pw.close();
 
 							/* Fetch path to source code temp file */
@@ -415,8 +435,12 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							e1.printStackTrace();
 						}
 					}
-				}
 
+					private boolean validString(String sourceCode) {
+						return sourceCode != null && !sourceCode.isEmpty();
+					}
+				}
+				
 				Runnable viewSourceCode = new ThreadToViewSourceCode(job);
 				Display.getDefault().asyncExec(viewSourceCode);
 			}

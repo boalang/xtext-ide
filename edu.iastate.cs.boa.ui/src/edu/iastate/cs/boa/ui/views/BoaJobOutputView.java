@@ -63,8 +63,8 @@ public class BoaJobOutputView extends BoaAbstractView {
 	 */
 	public void createPartControl(Composite parent) {
 		output = new Text(parent, SWT.WRAP);
-		output.setText("Attempting to fetch output now...");
-
+		output.setText("Attempting to download job output now...");
+		
 		makeActions(client);
 		refreshDisplay.run(); // populate view
 
@@ -141,7 +141,12 @@ public class BoaJobOutputView extends BoaAbstractView {
 		public void run() {
 			try {
 				int id = jobID.getInt("jobID", 0);
-				output.setText("Downloading job output now...");
+				if(id == 0){
+					output.setText("No job selected or unable to fetch job information");
+					output.setEditable(false);
+					return;
+				}
+				output.setText("Attempting to download job output now...");
 				JobHandle job = client.getJob(id);
 				String jobOutput = job.getOutput();
 
@@ -155,8 +160,10 @@ public class BoaJobOutputView extends BoaAbstractView {
 			} catch (NotLoggedInException e) {
 				e.printStackTrace();
 			} catch (BoaException e) {
+				output.setText("Empty or null output");
 				e.printStackTrace();
 			} catch (StorageException e) {
+				output.setText("Empty or null output");
 				e.printStackTrace();
 			}
 
