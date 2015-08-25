@@ -47,6 +47,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -58,6 +59,7 @@ import org.eclipse.ui.ide.IDE;
 
 import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.JobHandle;
+import edu.iastate.cs.boa.LoginException;
 import edu.iastate.cs.boa.NotLoggedInException;
 import edu.iastate.cs.boa.ui.handlers.OpenBoaView;
 
@@ -119,13 +121,12 @@ public class BoaJobDetailsView extends BoaAbstractView {
 	public void createPartControl(final Composite parent) {
 		int NUM_BUTTONS = 6;
 
-		final String[] COLUMN_NAMES = { "Job ID", "Date Submitted",
-				"Compilation Status", "Execution Status", "Input Dataset" };
+		final String[] COLUMN_NAMES = { "Job ID", "Date Submitted", "Compilation Status", "Execution Status",
+				"Input Dataset" };
 		final int[] COLUMN_WIDTHS = { 50, 175, 125, 105, 125 };
 
 		try {
-			viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-					| SWT.V_SCROLL);
+			viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 			viewer.setContentProvider(new ViewContentProvider());
 			viewer.setLabelProvider(new ViewLabelProvider());
 			viewer.setSorter(new NameSorter());
@@ -134,8 +135,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 			viewer.getTable().setHeaderVisible(true);
 
 			for (int i = 0; i < COLUMN_NAMES.length; i++) {
-				TableColumn column = new TableColumn(viewer.getTable(),
-						SWT.CENTER);
+				TableColumn column = new TableColumn(viewer.getTable(), SWT.CENTER);
 				column.setText(COLUMN_NAMES[i]);
 				column.setWidth(COLUMN_WIDTHS[i]);
 				column.setMoveable(true);
@@ -150,10 +150,8 @@ public class BoaJobDetailsView extends BoaAbstractView {
 			item.setData(job.getId());
 			item.setText(new String[] {
 					// Here is where we populate columns
-					String.valueOf(job.getId()), String.valueOf(job.getDate()),
-					String.valueOf(job.getCompilerStatus()),
-					String.valueOf(job.getExecutionStatus()),
-					String.valueOf(job.getDataset()) });
+					String.valueOf(job.getId()), String.valueOf(job.getDate()), String.valueOf(job.getCompilerStatus()),
+					String.valueOf(job.getExecutionStatus()), String.valueOf(job.getDataset()) });
 		} catch (StorageException e) {
 			e.printStackTrace();
 		} catch (NotLoggedInException e) {
@@ -176,31 +174,39 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		Button stop = new Button(container, SWT.PUSH);
 		stop.setText("Stop");
 		stop.addSelectionListener(new SelectionListener() {
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					job.stop();
-					refreshTable.run();
-					showMessage("Job has been stopped!");
-				} catch (NotLoggedInException e1) {
-					e1.printStackTrace();
-				} catch (BoaException e1) {
-					e1.printStackTrace();
-					try {
-						client.close();
-					} catch (BoaException e2) {
-						/*
-						 * If the program reaches here, you've got bigger
-						 * problems...
-						 */
-						showMessage("Please restart Eclipse!");
+				class ThreadToStopJob implements Runnable {
+					JobHandle job;
+
+					ThreadToStopJob(JobHandle j) {
+						job = j;
+					}
+
+					@Override
+					public void run() {
+						try {
+							job.stop();
+							refreshTable.run();
+							showMessage("Stop command has been sent!");
+						} catch (NotLoggedInException e) {
+							e.printStackTrace();
+						} catch (BoaException e) {
+							e.printStackTrace();
+						}
 					}
 				}
+
+				Runnable stopJob = new ThreadToStopJob(job);
+				Display.getDefault().asyncExec(stopJob);
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
+
 		});
 
 		/*
@@ -209,28 +215,41 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		Button delete = new Button(container, SWT.PUSH);
 		delete.setText("Delete");
 		delete.addSelectionListener(new SelectionListener() {
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					job.delete();
-					viewer.refresh();
-					BoaJobsView.refresh.run();
-					showMessage("Job has been deleted!");
-				} catch (NotLoggedInException e1) {
-					e1.printStackTrace();
-				} catch (BoaException e1) {
-					e1.printStackTrace();
-					try {
-						client.close();
-					} catch (BoaException e2) {
-						showMessage("Please restart Eclipse!");
+
+				class ThreadToDeleteJob implements Runnable {
+					JobHandle job;
+
+					ThreadToDeleteJob(JobHandle j) {
+						job = j;
+					}
+
+					@Override
+					public void run() {
+						try {
+							job.delete();
+							viewer.refresh();
+							BoaJobsView.refresh.run();
+							showMessage("Delete command has been sent!");
+						} catch (NotLoggedInException e1) {
+							e1.printStackTrace();
+						} catch (BoaException e1) {
+							e1.printStackTrace();
+						}
 					}
 				}
+
+				Runnable deleteJob = new ThreadToDeleteJob(job);
+				Display.getDefault().asyncExec(deleteJob);
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
+
 		});
 
 		/*
@@ -239,27 +258,40 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		Button resubmit = new Button(container, SWT.PUSH);
 		resubmit.setText("Resubmit");
 		resubmit.addSelectionListener(new SelectionListener() {
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					job.resubmit();
-					refreshTable.run();
-					showMessage("Job has been resubmitted!");
-				} catch (NotLoggedInException e1) {
-					e1.printStackTrace();
-				} catch (BoaException e1) {
-					e1.printStackTrace();
-					try {
-						client.close();
-					} catch (BoaException e2) {
-						showMessage("Please restart Eclipse!");
+
+				class ThreadToResubmitJob implements Runnable {
+					JobHandle job;
+
+					ThreadToResubmitJob(JobHandle j) {
+						job = j;
+					}
+
+					@Override
+					public void run() {
+						try {
+							job.resubmit();
+							refreshTable.run();
+							showMessage("Job has been resubmitted!");
+						} catch (NotLoggedInException e1) {
+							e1.printStackTrace();
+						} catch (BoaException e1) {
+							e1.printStackTrace();
+						}
 					}
 				}
+
+				Runnable resubmitJob = new ThreadToResubmitJob(job);
+				Display.getDefault().asyncExec(resubmitJob);
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
+
 		});
 
 		/*
@@ -276,14 +308,13 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
 		});
 
 		/*
 		 * Public/Private button
 		 */
-
-		/*
 		final Button accessStatus = new Button(container, SWT.PUSH);
 		String currentAccessStatus = "Unknown Access Status";
 		try {
@@ -295,42 +326,52 @@ public class BoaJobDetailsView extends BoaAbstractView {
 			e3.printStackTrace();
 		} catch (BoaException e1) {
 			e1.printStackTrace();
-			try {
-				client.close();
-			} catch (BoaException e2) {
-				e2.printStackTrace();
-			}
 		}
 		accessStatus.setText(currentAccessStatus);
 		accessStatus.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					if (job.getPublic()) {
-						job.setPublic(false);
-						accessStatus.setText("Make Public");
-					} else {
-						job.setPublic(true);
-						accessStatus.setText("Make Private");
+
+				class ThreadToSetAccessStatus implements Runnable {
+					JobHandle job;
+
+					ThreadToSetAccessStatus(JobHandle j) {
+						job = j;
 					}
-					accessStatus.pack(); // resize the button
-				} catch (LoginException e3) {
-					e3.printStackTrace();
-				} catch (BoaException e1) {
-					e1.printStackTrace();
-					try {
-						client.close();
-					} catch (BoaException e2) {
-						e2.printStackTrace();
+
+					@Override
+					public void run() {
+						try {
+							if (job.getPublic()) {
+								job.setPublic(false);
+								accessStatus.setText("Make Public");
+							} else {
+								job.setPublic(true);
+								accessStatus.setText("Make Private");
+							}
+							accessStatus.pack(); // resize the button
+						} catch (LoginException e3) {
+							e3.printStackTrace();
+						} catch (BoaException e1) {
+							e1.printStackTrace();
+							try {
+								client.close();
+							} catch (BoaException e2) {
+								e2.printStackTrace();
+							}
+						}
 					}
 				}
+
+				Runnable setAccessStatus = new ThreadToSetAccessStatus(job);
+				Display.getDefault().asyncExec(setAccessStatus);
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
 		});
-		*/
 
 		/*
 		 * Source Code button
@@ -340,35 +381,53 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		viewSourceCode.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					File tempFile = File.createTempFile(
-							"boaSource" + System.currentTimeMillis(), ".boa");
-					PrintWriter pw = new PrintWriter(tempFile);
-					pw.write(job.getSource());
-					pw.close();
 
-					IFileStore input = EFS.getLocalFileSystem().getStore(
-							new Path(tempFile.getAbsolutePath()));
-					IDE.openInternalEditorOnFileStore(PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getActivePage(), input);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (PartInitException e1) {
-					e1.printStackTrace();
-				} catch (NotLoggedInException e1) {
-					e1.printStackTrace();
-				} catch (BoaException e1) {
-					e1.printStackTrace();
+				class ThreadToViewSourceCode implements Runnable {
+					JobHandle job;
+
+					ThreadToViewSourceCode(JobHandle j) {
+						job = j;
+					}
+
+					@Override
+					public void run() {
+						try {
+							/* Use system time to ensure uniqueness */
+							File tempFile = File.createTempFile("boaSource" + System.currentTimeMillis(), ".boa");
+							PrintWriter pw = new PrintWriter(tempFile);
+							pw.write("# " + tempFile.getAbsolutePath() + "\n");
+							pw.write(job.getSource()); // write code to file
+							pw.close();
+
+							/* Fetch path to source code temp file */
+							IFileStore input = EFS.getLocalFileSystem().getStore(new Path(tempFile.getAbsolutePath()));
+
+							/* Open the source code file with a Boa editor */
+							IDE.openInternalEditorOnFileStore(
+									PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), input);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						} catch (PartInitException e1) {
+							e1.printStackTrace();
+						} catch (NotLoggedInException e1) {
+							e1.printStackTrace();
+						} catch (BoaException e1) {
+							e1.printStackTrace();
+						}
+					}
 				}
+
+				Runnable viewSourceCode = new ThreadToViewSourceCode(job);
+				Display.getDefault().asyncExec(viewSourceCode);
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
 		});
 
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "edu.iastate.cs.boa.ui.viewer");
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
@@ -428,23 +487,19 @@ public class BoaJobDetailsView extends BoaAbstractView {
 				item.setData(job.getId());
 				item.setText(new String[] {
 						// Here is where we populate columns
-						String.valueOf(job.getId()),
-						String.valueOf(job.getDate()),
-						String.valueOf(job.getCompilerStatus()),
-						String.valueOf(job.getExecutionStatus()),
+						String.valueOf(job.getId()), String.valueOf(job.getDate()),
+						String.valueOf(job.getCompilerStatus()), String.valueOf(job.getExecutionStatus()),
 						String.valueOf(job.getDataset().getName()) });
 			}
 		};
 		refreshTable.setToolTipText("Refresh");
-		refreshTable.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+		refreshTable.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				showMessage(obj.toString());
 			}
 		};
