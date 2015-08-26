@@ -196,7 +196,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 						try {
 							job.stop();
 							refreshTable.run();
-							showMessage("Stop command has been sent!");
+							// showMessage("Stop command has been sent!");
 						} catch (NotLoggedInException e) {
 							e.printStackTrace();
 						} catch (BoaException e) {
@@ -230,7 +230,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							viewer.refresh();
 							jobID.putInt("jobID", 0, false);
 							BoaJobsView.refresh.run();
-							showMessage("Delete command has been sent!");
+							// showMessage("Delete command has been sent!");
 						} catch (NotLoggedInException e1) {
 							e1.printStackTrace();
 						} catch (BoaException e1) {
@@ -264,7 +264,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 						try {
 							job.resubmit();
 							refreshTable.run();
-							showMessage("Job has been resubmitted!");
+							// showMessage("Job has been resubmitted!");
 						} catch (NotLoggedInException e1) {
 							e1.printStackTrace();
 						} catch (BoaException e1) {
