@@ -189,13 +189,8 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				class ThreadToStopJob implements Runnable {
-					JobHandle job;
 
-					ThreadToStopJob(JobHandle j) {
-						job = j;
-					}
-
+				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
 						try {
@@ -208,10 +203,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							e.printStackTrace();
 						}
 					}
-				}
-
-				Runnable stopJob = new ThreadToStopJob(job);
-				Display.getDefault().asyncExec(stopJob);
+				});
 			}
 
 			@Override
@@ -230,14 +222,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
-				class ThreadToDeleteJob implements Runnable {
-					JobHandle job;
-
-					ThreadToDeleteJob(JobHandle j) {
-						job = j;
-					}
-
+				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
 						try {
@@ -254,10 +239,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							e.printStackTrace();
 						}
 					}
-				}
-
-				Runnable deleteJob = new ThreadToDeleteJob(job);
-				Display.getDefault().asyncExec(deleteJob);
+				});
 			}
 
 			@Override
@@ -276,14 +258,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
-				class ThreadToResubmitJob implements Runnable {
-					JobHandle job;
-
-					ThreadToResubmitJob(JobHandle j) {
-						job = j;
-					}
-
+				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
 						try {
@@ -296,10 +271,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							e1.printStackTrace();
 						}
 					}
-				}
-
-				Runnable resubmitJob = new ThreadToResubmitJob(job);
-				Display.getDefault().asyncExec(resubmitJob);
+				});
 			}
 
 			@Override
@@ -317,8 +289,15 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		output.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				OpenBoaView.openOutputView();
-				BoaJobOutputView.refreshDisplay.run();
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						OpenBoaView.openOutputView();
+						BoaJobOutputView.refreshDisplay.run();
+					}
+
+				});
+
 			}
 
 			@Override
@@ -346,14 +325,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		accessStatus.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
-				class ThreadToSetAccessStatus implements Runnable {
-					JobHandle job;
-
-					ThreadToSetAccessStatus(JobHandle j) {
-						job = j;
-					}
-
+				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
 						try {
@@ -376,10 +348,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							}
 						}
 					}
-				}
-
-				Runnable setAccessStatus = new ThreadToSetAccessStatus(job);
-				Display.getDefault().asyncExec(setAccessStatus);
+				});
 			}
 
 			@Override
@@ -396,14 +365,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 		viewSourceCode.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
-				class ThreadToViewSourceCode implements Runnable {
-					JobHandle job;
-
-					ThreadToViewSourceCode(JobHandle j) {
-						job = j;
-					}
-
+				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
 						try {
@@ -439,10 +401,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 					private boolean validString(String sourceCode) {
 						return sourceCode != null && !sourceCode.isEmpty();
 					}
-				}
-				
-				Runnable viewSourceCode = new ThreadToViewSourceCode(job);
-				Display.getDefault().asyncExec(viewSourceCode);
+				});
 			}
 
 			@Override
