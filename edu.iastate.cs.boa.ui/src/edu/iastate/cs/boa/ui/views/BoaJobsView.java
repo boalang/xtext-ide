@@ -351,7 +351,7 @@ public class BoaJobsView extends BoaAbstractView {
 				// Cache the job URL
 				jobURLs.put(String.valueOf(jobs.get(i).getId()), jobs.get(i).getUrl().toString(), false);
 
-				Runnable update = new ThreadToUpdateJobList(i, jobs.get(i));
+				Runnable update = new UpdateJobsListTask(i, jobs.get(i));
 				Display.getDefault().asyncExec(update);
 			}
 			jobURLs.flush();
@@ -371,17 +371,17 @@ public class BoaJobsView extends BoaAbstractView {
 		}
 	}
 
-	public class ThreadToUpdateJobList implements Runnable {
+	public class UpdateJobsListTask implements Runnable {
 		public TableItem item;
 		public JobHandle job;
 		public int iter;
 
-		public ThreadToUpdateJobList(int i, JobHandle job) {
+		public UpdateJobsListTask(int i, JobHandle job) {
 			this.job = job;
 			this.iter = i;
 		}
 
-		public ThreadToUpdateJobList() {
+		public UpdateJobsListTask() {
 		}
 
 		public void run() {
