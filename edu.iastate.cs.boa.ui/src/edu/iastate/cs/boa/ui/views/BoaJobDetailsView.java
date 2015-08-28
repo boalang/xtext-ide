@@ -23,7 +23,11 @@ import java.util.Date;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.action.Action;
@@ -57,6 +61,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.osgi.framework.Bundle;
 
 import edu.iastate.cs.boa.BoaException;
 import edu.iastate.cs.boa.CompileStatus;
@@ -80,6 +85,7 @@ public class BoaJobDetailsView extends BoaAbstractView {
 	protected static Action refreshTable;
 	private ISecurePreferences jobID;
 	private JobHandle job;
+	private ILog log;
 
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
@@ -112,6 +118,8 @@ public class BoaJobDetailsView extends BoaAbstractView {
 	public BoaJobDetailsView() {
 		super();
 		jobID = secureStorage.node("/boa/jobID");
+		Bundle bundle = Platform.getBundle(BUNDLE_ID);
+		log = Platform.getLog(bundle);
 	}
 
 	/**
@@ -196,7 +204,8 @@ public class BoaJobDetailsView extends BoaAbstractView {
 						try {
 							job.stop();
 							refreshTable.run();
-							// showMessage("Stop command has been sent!");
+							log.log(new Status(IStatus.INFO, BoaJobDetailsView.ID,
+									"Stop command has been sent for Boa job " + jobID));
 						} catch (NotLoggedInException e) {
 							e.printStackTrace();
 						} catch (BoaException e) {
@@ -230,7 +239,8 @@ public class BoaJobDetailsView extends BoaAbstractView {
 							viewer.refresh();
 							jobID.putInt("jobID", 0, false);
 							BoaJobsView.refresh.run();
-							// showMessage("Delete command has been sent!");
+							log.log(new Status(IStatus.INFO, BoaJobDetailsView.ID,
+									"Delete command has been sent for Boa job " + jobID));
 						} catch (NotLoggedInException e1) {
 							e1.printStackTrace();
 						} catch (BoaException e1) {
@@ -264,7 +274,8 @@ public class BoaJobDetailsView extends BoaAbstractView {
 						try {
 							job.resubmit();
 							refreshTable.run();
-							// showMessage("Job has been resubmitted!");
+							log.log(new Status(IStatus.INFO, BoaJobDetailsView.ID,
+									"Resubmit command has been sent for Boa job " + jobID));
 						} catch (NotLoggedInException e1) {
 							e1.printStackTrace();
 						} catch (BoaException e1) {

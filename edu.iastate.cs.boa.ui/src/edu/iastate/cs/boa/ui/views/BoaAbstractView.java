@@ -32,9 +32,11 @@ import edu.iastate.cs.boa.LoginException;
  * @author rdyer
  */
 public abstract class BoaAbstractView extends ViewPart {
+	protected static final String BUNDLE_ID = "edu.iastate.cs.boa.ui";
 	static BoaClient client;
 	ISecurePreferences secureStorage;
 	ISecurePreferences credentials;
+	
 
 	public BoaAbstractView() {
 		super();
