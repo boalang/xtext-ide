@@ -43,12 +43,12 @@ public class CompilerInvocation extends AbstractHandler {
 			return null;
 	}
 	
-	public void runBoaCompiler(){
+	public void runBoaCompiler() {
 		String path_to_program = getPathToProgram();
-	    String[] errorOutput = null;
+		String[] errorOutput = null;
 		
-	    try {
-		    CompilerErrorValidation errorValidation = new CompilerErrorValidation();
+		try {
+			CompilerErrorValidation errorValidation = new CompilerErrorValidation();
 			errorOutput = errorValidation.typecheck(errorValidation.load(path_to_program));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -58,8 +58,7 @@ public class CompilerInvocation extends AbstractHandler {
 	}
 	
 	private void writeToAFile(String[] errorOutput){
-		String location = CompilerInvocation.class.getProtectionDomain().getCodeSource().getLocation().
-				getFile();
+		String location = CompilerInvocation.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		String filePath = location + "error.txt";
 		String content = errorOutput[0] + "\n"+errorOutput[1] + "\n"+errorOutput[2] + "\n";
 		File file = new File(filePath);
@@ -68,10 +67,9 @@ public class CompilerInvocation extends AbstractHandler {
 			FileWriter fw = new FileWriter(file, false);
 			
 			if(errorOutput[0]!=null)
-             fw.write(content);
+				fw.write(content);
 			else
-			 fw.write("");
-            
+				fw.write("");
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
