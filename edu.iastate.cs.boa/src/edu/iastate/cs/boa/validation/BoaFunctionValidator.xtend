@@ -67,15 +67,14 @@ class BoaFunctionValidator extends BoaValidator {
 	 		lineNumber = lineNumber.replaceAll("\\s+","")
 	 		columnNumber = columnNumber.replaceAll("\\s+","")
 	 		lineNum = Integer.parseInt(lineNumber)
-            
-            var node = NodeModelUtils.getNode(id)
-            var start_line = node.getStartLine()
 	 		
-	 		if (start_line == lineNum) {
+	 		var node = NodeModelUtils.getNode(id)
+	 		var start_line = node.getStartLine()
+	 		
+	 		if (start_line == lineNum)
 	 			error(message,id,null)
-	 		}
 	 	}
-	}
+	 }
 	 
 	@Check(CheckType::NORMAL)
 	def void errorChecking(Statement stmt){
