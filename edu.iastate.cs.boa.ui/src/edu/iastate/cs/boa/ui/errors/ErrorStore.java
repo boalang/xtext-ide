@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package edu.iastate.cs.boa.ui.errorValidation;
+package edu.iastate.cs.boa.ui.errors;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -34,7 +34,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-public class CompilerInvocation extends AbstractHandler {
+public class ErrorStore extends AbstractHandler {
 	int i = 1;
 	
 	@Override
@@ -48,7 +48,7 @@ public class CompilerInvocation extends AbstractHandler {
 		String[] errorOutput = null;
 		
 		try {
-			CompilerErrorValidation errorValidation = new CompilerErrorValidation();
+			FetchCompilerError errorValidation = new FetchCompilerError();
 			errorOutput = errorValidation.typecheck(errorValidation.load(path_to_program));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -58,7 +58,7 @@ public class CompilerInvocation extends AbstractHandler {
 	}
 	
 	private void writeToAFile(String[] errorOutput){
-		String location = CompilerInvocation.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		String location = ErrorStore.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		String filePath = location + "error.txt";
 		String content = errorOutput[0] + "\n"+errorOutput[1] + "\n"+errorOutput[2] + "\n";
 		File file = new File(filePath);

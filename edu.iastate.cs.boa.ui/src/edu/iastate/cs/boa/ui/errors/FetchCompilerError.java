@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package edu.iastate.cs.boa.ui.errorValidation;
+package edu.iastate.cs.boa.ui.errors;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -49,7 +49,7 @@ import boa.parser.BoaParser.StartContext;
 /**
  * @author rdyer
  */
-public class CompilerErrorValidation {
+public class FetchCompilerError {
 	protected static boolean DEBUG = true;
 	static int i = 1;
 	public boolean hasError = false;
