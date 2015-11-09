@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package edu.iastate.cs.boa.ui.handlers;
+package edu.iastate.cs.boa.ui.errorValidation;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -33,9 +33,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-import edu.iastate.cs.boa.ui.errorValidation.BoaErrorValidation;
 
-public class BoaDebuggerHandler extends AbstractHandler {
+public class CompilerInvocation extends AbstractHandler {
 	int i = 1;
 	
 	@Override
@@ -47,8 +46,9 @@ public class BoaDebuggerHandler extends AbstractHandler {
 	public void runBoaCompiler(){
 		String path_to_program = getPathToProgram();
 	    String[] errorOutput = null;
-		try {
-		    BoaErrorValidation errorValidation = new BoaErrorValidation();
+		
+	    try {
+		    CompilerErrorValidation errorValidation = new CompilerErrorValidation();
 			errorOutput = errorValidation.typecheck(errorValidation.load(path_to_program));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -58,18 +58,21 @@ public class BoaDebuggerHandler extends AbstractHandler {
 	}
 	
 	private void writeToAFile(String[] errorOutput){
-		String location = BoaDebuggerHandler.class.getProtectionDomain().getCodeSource().getLocation().
+		String location = CompilerInvocation.class.getProtectionDomain().getCodeSource().getLocation().
 				getFile();
 		String filePath = location + "error.txt";
 		String content = errorOutput[0] + "\n"+errorOutput[1] + "\n"+errorOutput[2] + "\n";
 		File file = new File(filePath);
+		
 		try {
 			FileWriter fw = new FileWriter(file, false);
+			
 			if(errorOutput[0]!=null)
              fw.write(content);
 			else
 			 fw.write("");
-            fw.close();
+            
+			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	
@@ -79,15 +82,16 @@ public class BoaDebuggerHandler extends AbstractHandler {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow window = workbench == null ? null : workbench.getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = window == null ? null : window.getActivePage();
-
 		IEditorPart editor = activePage == null ? null : activePage.getActiveEditor();
 		IEditorInput input = editor == null ? null : editor.getEditorInput();
 		IPath path = input instanceof FileEditorInput ? ((FileEditorInput) input).getPath() : null;
+		
 		if (path != null) {
 			return path.toFile().getAbsolutePath();
 		}
-		showMessage(
-				"Unable to debug program. Please ensure that the file is in the workspace and has the Boa nature attached");
+		
+		showMessage("Unable to debug program. Please ensure that the file is in the workspace and has the Boa nature attached");
+		
 		return "";
 	}
 

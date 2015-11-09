@@ -49,7 +49,7 @@ import boa.parser.BoaParser.StartContext;
 /**
  * @author rdyer
  */
-public class BoaErrorValidation {
+public class CompilerErrorValidation {
 	protected static boolean DEBUG = true;
 	static int i = 1;
 	public boolean hasError = false;
@@ -60,14 +60,12 @@ public class BoaErrorValidation {
 	public String[] error(final String kind, final TokenSource tokens, final Object offendingSymbol, final int line, final int charPositionInLine, final int length, final String msg, final Exception e) {
 		try {
 			//underlineError(tokens, (Token)offendingSymbol, line, charPositionInLine, length);
-			
 			error[0] = Integer.toString(line); 
 			error[1] = Integer.toString(charPositionInLine);
 			error[2] = msg;
+		} catch(Exception exception) {
 		}
-		catch(Exception exception){
-			
-		}
+		
 		return error;		
 	}
 	
@@ -90,7 +88,6 @@ public class BoaErrorValidation {
 				System.err.print("^^^^");
 			else
 				System.err.print("^");
-
 		System.err.println();
 	}
 
@@ -128,7 +125,7 @@ public class BoaErrorValidation {
 	//
 
 	protected StartContext parse(final String input) throws IOException {
-		if(i==1){
+		if(i==1) {
 			SymbolTable.initialize(new ArrayList<URL>());
 			i = i + 1;
 		}
@@ -136,7 +133,6 @@ public class BoaErrorValidation {
 	}
 
 	protected StartContext parse(final String input, final String[] errors) throws IOException {
-		
 		final CommonTokenStream tokens = lex(input);
 		final BoaParser parser = new BoaParser(tokens);
 		final List<String> foundErr = new ArrayList<String>();
@@ -147,6 +143,7 @@ public class BoaErrorValidation {
 				throw new ParseCancellationException(e);
 			}
 		});
+		
 		parseErrorListener = new ParserErrorListener();
 		parser.setBuildParseTree(false);
 		parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
@@ -185,22 +182,26 @@ public class BoaErrorValidation {
 	protected String[] typecheck(final String input, final String error) throws IOException {
 		final Start p = parse(input).ast;
 		String[] errorOutput = new String[3];
+		
 		try {
 			new TypeCheckingVisitor().start(p, new SymbolTable());
 		} catch (final TypeCheckException e) {
+			
 			if (error == null){
 				errorOutput = error("typecheck", lexer, null, e.n.beginLine, 
 					e.n.beginColumn, e.n2.endColumn - e.n.beginColumn + 1, e.getMessage(), e);
 			}
+			
+		} catch (Exception e1) {
 		}
-		catch (Exception e1) {
-		}
+		
 		return errorOutput;
 	}
 	
 
 	public String load(final String fileName) throws IOException {
 		BufferedInputStream in = null;
+		
 		try {
 			in = new BufferedInputStream(new FileInputStream(fileName));
 			final byte[] bytes = new byte[(int) new File(fileName).length()];
@@ -209,7 +210,7 @@ public class BoaErrorValidation {
 		} finally {
 			if (in != null)
 				in.close();
-		}
+		}		
 	}
 	
 }

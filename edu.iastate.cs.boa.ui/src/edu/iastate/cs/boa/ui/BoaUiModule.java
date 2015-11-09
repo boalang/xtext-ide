@@ -42,7 +42,7 @@ public class BoaUiModule extends edu.iastate.cs.boa.ui.AbstractBoaUiModule {
 	}
 	
 	public Class<? extends org.eclipse.xtext.ui.editor.model.XtextDocumentProvider> bindXtextDocumentProvider() {
-		return edu.iastate.cs.boa.ui.handlers.BoaSaveHandler.class;
+		return edu.iastate.cs.boa.ui.handlers.OnSaveHandler.class;
 	}
 
 	public com.google.inject.Provider<org.eclipse.xtext.resource.containers.IAllContainersState> provideIAllContainersState() {

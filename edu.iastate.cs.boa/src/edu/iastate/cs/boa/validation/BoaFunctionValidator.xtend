@@ -39,7 +39,9 @@ class BoaFunctionValidator extends BoaValidator {
 	public static val UNREACHABLE_CODE = "edu.iastate.cs.boa.UnreachableCode"
 	public static val MISSING_RETURN = "edu.iastate.cs.boa.MissingReturn"
 
-	var lineNumber = "" var columnNumber = "" var message = ""
+	var lineNumber = "" 
+	var columnNumber = "" 
+	var message = ""
 	var lineNum = 0
 	
 	@Check(CheckType::NORMAL)
@@ -49,40 +51,45 @@ class BoaFunctionValidator extends BoaValidator {
 	    var FileReader fileReader = new FileReader(filePath)
         var BufferedReader bufferedReader = new BufferedReader(fileReader)
 		var readLine = ""
-		if((readLine = bufferedReader.readLine()) != null){
-			  lineNumber = readLine
-              columnNumber = bufferedReader.readLine()
-              message = bufferedReader.readLine()
+		
+		if ((readLine = bufferedReader.readLine()) != null) {
+			lineNumber = readLine
+        	columnNumber = bufferedReader.readLine()
+            message = bufferedReader.readLine()
 		}
-		else {
+		else { 
 			lineNumber = "" columnNumber= "" message = ""
 		}
 
-	 	if(lineNumber == "") {return}
-	 	else{
-            lineNumber = lineNumber.replaceAll("\\s+","")
+	 	if (lineNumber == "")
+	 		return
+	 	else {
+        	lineNumber = lineNumber.replaceAll("\\s+","")
             columnNumber = columnNumber.replaceAll("\\s+","")
             lineNum = Integer.parseInt(lineNumber)
+            
 			var node = NodeModelUtils.getNode(id)
 	 		var start_line = node.getStartLine()
-	 		if (start_line == lineNum){
+	 		
+	 		if (start_line == lineNum) {
 	 			error(message,id,null)
 	 		} 
-	 	}		 	
-	 }
+		}		 	
+	}
 	 
 	@Check(CheckType::NORMAL)
    	def void errorChecking(Statement stmt){
-   	   if(lineNumber == "") {return}
-       else{
+   	   if (lineNumber == "") 	
+   	   		return
+       else {
 			var node = NodeModelUtils.getNode(stmt)
 	 		var start_line = node.getStartLine()
-	 		if (start_line == lineNum){
+	 		
+	 		if (start_line == lineNum) {
 	 			error(message,stmt,null)
 	 		} 
-       }  
-   	     	
-	 }
+       } 
+	}
 
 	@Check
 	def void checkNoUnreachable(Block b) {
