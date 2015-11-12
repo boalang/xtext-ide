@@ -57,22 +57,25 @@ public class ErrorStore extends AbstractHandler {
 		writeToAFile(errorOutput);			
 	}
 	
-	private void writeToAFile(String[] errorOutput){
+	private void writeToAFile(String[] errorOutput) {
 		String location = ErrorStore.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		String filePath = location + "error.txt";
-		String content = errorOutput[0] + "\n"+errorOutput[1] + "\n"+errorOutput[2] + "\n";
-		File file = new File(filePath);
-		
-		try {
-			FileWriter fw = new FileWriter(file, false);
 			
-			if(errorOutput[0]!=null)
-				fw.write(content);
-			else
-				fw.write("");
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		try {
+			if(errorOutput!=null) {
+				String content = errorOutput[0] + "\n"+errorOutput[1] + "\n"+errorOutput[2] + "\n";
+				File file = new File(filePath);
+				FileWriter fw = new FileWriter(file, false);
+				
+				if(errorOutput[0]!=null)
+					fw.write(content);
+				else
+					fw.write("");
+				fw.close();
+			}
+				
+		} catch (Exception e) {
+				e.printStackTrace();
 		}	
 	}
 
