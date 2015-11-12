@@ -26,7 +26,6 @@ import edu.iastate.cs.boa.boa.StopStatement
 import org.eclipse.xtext.validation.Check
 import java.io.BufferedReader
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
-import edu.iastate.cs.boa.boa.Statement
 import java.io.FileReader
 import org.eclipse.xtext.validation.CheckType
 import edu.iastate.cs.boa.boa.Identifier
@@ -34,6 +33,7 @@ import edu.iastate.cs.boa.boa.Identifier
 
 /**
  * @author rdyer
+ * @author ankur
  */
 class BoaFunctionValidator extends BoaValidator {
 	public static val UNREACHABLE_CODE = "edu.iastate.cs.boa.UnreachableCode"

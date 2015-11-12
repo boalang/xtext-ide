@@ -23,6 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * Use this class to register components to be used within the IDE.
  * 
  * @author rdyer
+ * @author ankur
  */
 public class BoaUiModule extends edu.iastate.cs.boa.ui.AbstractBoaUiModule {
 	public BoaUiModule(AbstractUIPlugin plugin) {
