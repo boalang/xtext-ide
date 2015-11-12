@@ -23,15 +23,53 @@ import edu.iastate.cs.boa.boa.ContinueStatement
 import edu.iastate.cs.boa.boa.FunctionExpression
 import edu.iastate.cs.boa.boa.ReturnStatement
 import edu.iastate.cs.boa.boa.StopStatement
-
 import org.eclipse.xtext.validation.Check
+import java.io.BufferedReader
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import java.io.FileReader
+import org.eclipse.xtext.validation.CheckType
+import edu.iastate.cs.boa.boa.Identifier
+
 
 /**
  * @author rdyer
+ * @author ankur
  */
 class BoaFunctionValidator extends BoaValidator {
 	public static val UNREACHABLE_CODE = "edu.iastate.cs.boa.UnreachableCode"
 	public static val MISSING_RETURN = "edu.iastate.cs.boa.MissingReturn"
+	
+	@Check(CheckType::NORMAL)
+	def void checkIdentifier(Identifier id){
+		var lineNumber = "" var columnNumber = "" var message = "" var lineNum = 0
+		var location = typeof(BoaFunctionValidator).getProtectionDomain().getCodeSource().getLocation().getFile()
+		var filePath = location + "../edu.iastate.cs.boa.ui/error.txt"
+		var FileReader fileReader = new FileReader(filePath)
+		var BufferedReader bufferedReader = new BufferedReader(fileReader)
+		var readLine = ""
+		if ((readLine = bufferedReader.readLine()) != null) {
+			lineNumber = readLine
+			columnNumber = bufferedReader.readLine()
+			message = bufferedReader.readLine()
+		}
+		else {
+			lineNumber = "" columnNumber= "" message = ""
+		}
+
+	 	if (lineNumber == "")
+	 		return
+	 	else {
+	 		lineNumber = lineNumber.replaceAll("\\s+","")
+	 		columnNumber = columnNumber.replaceAll("\\s+","")
+	 		lineNum = Integer.parseInt(lineNumber)
+	 		
+	 		var node = NodeModelUtils.getNode(id)
+	 		var start_line = node.getStartLine()
+	 		
+	 		if (start_line == lineNum)
+	 			error(message,id,null)
+	 	}
+	}
 
 	@Check
 	def void checkNoUnreachable(Block b) {

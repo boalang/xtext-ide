@@ -23,6 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * Use this class to register components to be used within the IDE.
  * 
  * @author rdyer
+ * @author ankur
  */
 public class BoaUiModule extends edu.iastate.cs.boa.ui.AbstractBoaUiModule {
 	public BoaUiModule(AbstractUIPlugin plugin) {
@@ -39,6 +40,10 @@ public class BoaUiModule extends edu.iastate.cs.boa.ui.AbstractBoaUiModule {
 
 	public Class<? extends org.eclipse.xtext.ui.wizard.IProjectCreator> bindIProjectCreator() {
 		return edu.iastate.cs.boa.ui.wizard.BoaCustomProjectCreator.class;
+	}
+	
+	public Class<? extends org.eclipse.xtext.ui.editor.model.XtextDocumentProvider> bindXtextDocumentProvider() {
+		return edu.iastate.cs.boa.ui.handlers.OnSaveHandler.class;
 	}
 
 	public com.google.inject.Provider<org.eclipse.xtext.resource.containers.IAllContainersState> provideIAllContainersState() {
