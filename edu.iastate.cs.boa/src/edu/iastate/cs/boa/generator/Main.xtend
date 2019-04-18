@@ -38,7 +38,7 @@ class Main {
 			System::err.println('Aborting: no path to EMF resource provided!')
 			return
 		}
-		val injector = new edu.iastate.cs.boa.BoaStandaloneSetup().createInjectorAndDoEMFRegistration
+		val injector = new edu.iastate.cs.boa.BoaStandaloneSetup().createInjectorAndDoEMFRegistration()
 		val main = injector.getInstance(typeof(Main))
 		main.runGenerator(args.get(0))
 	}
