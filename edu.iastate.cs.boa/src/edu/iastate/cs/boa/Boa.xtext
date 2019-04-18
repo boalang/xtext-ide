@@ -43,6 +43,7 @@ Type:
 	| FunctionType
 	| VisitorType
 	| StackType
+	| QueueType
 	| SetType
 	| Identifier);
 
@@ -75,6 +76,9 @@ MapType:
 
 StackType:
 	'stack' {StackType} 'of' values=Component;
+
+QueueType:
+	'queue' {QueueType} 'of' values=Component;
 
 SetType:
 	'set' {SetType} 'of' values=Component;
