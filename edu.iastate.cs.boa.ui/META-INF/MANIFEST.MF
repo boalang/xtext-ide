@@ -27,6 +27,7 @@ Import-Package: org.apache.log4j,
  org.eclipse.equinox.security.auth.module,
  org.eclipse.equinox.security.storage,
  org.eclipse.equinox.security.storage.provider,
+ org.eclipse.jdt.core.dom,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: edu.iastate.cs.boa.ui.quickfix,
