@@ -19,7 +19,8 @@ Require-Bundle: edu.iastate.cs.boa;visibility:=reexport,
  org.eclipse.core.resources,
  org.eclipse.xtend,
  org.eclipse.xpand,
- org.eclipse.core.filesystem
+ org.eclipse.core.filesystem,
+ org.eclipse.xtext.xbase.lib
 Import-Package: org.apache.log4j,
  org.eclipse.equinox.security.auth,
  org.eclipse.equinox.security.auth.credentials,
@@ -27,11 +28,12 @@ Import-Package: org.apache.log4j,
  org.eclipse.equinox.security.storage,
  org.eclipse.equinox.security.storage.provider,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: edu.iastate.cs.boa.ui.quickfix,
  edu.iastate.cs.boa.ui.contentassist,
  edu.iastate.cs.boa.ui.contentassist.antlr,
- edu.iastate.cs.boa.ui.internal
+ edu.iastate.cs.boa.ui.internal,
+ edu.iastate.cs.boa.ui.contentassist.antlr.internal
 Bundle-Activator: edu.iastate.cs.boa.ui.internal.BoaActivator
 Bundle-ClassPath: lib/boa-client.jar,
  lib/boa-compiler.jar,
@@ -39,4 +41,3 @@ Bundle-ClassPath: lib/boa-client.jar,
  lib/commons-math-2.1.jar,
  lib/hadoop-core-1.0.4.jar,
  .
-
