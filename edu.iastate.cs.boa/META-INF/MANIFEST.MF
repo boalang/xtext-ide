@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iastate.cs.boa
 Bundle-Vendor: Iowa State University
-Bundle-Version: 0.1.1.1
+Bundle-Version: 0.1.1.2
 Bundle-SymbolicName: edu.iastate.cs.boa; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,

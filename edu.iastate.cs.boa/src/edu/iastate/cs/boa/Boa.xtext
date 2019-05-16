@@ -44,6 +44,7 @@ Type:
 	| VisitorType
 	| StackType
 	| QueueType
+	| ListType
 	| SetType
 	| Identifier);
 
@@ -79,6 +80,9 @@ StackType:
 
 QueueType:
 	'queue' {QueueType} 'of' values=Component;
+
+ListType:
+	'list' {ListType} 'of' values=Component;
 
 SetType:
 	'set' {SetType} 'of' values=Component;

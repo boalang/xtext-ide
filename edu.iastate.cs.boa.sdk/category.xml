@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/edu.iastate.cs.boa.sdk_0.1.1.2.jar" id="edu.iastate.cs.boa.sdk" version="0.1.1.2">
+      <category name="boa"/>
+   </feature>
+   <category-def name="boa" label="Boa SDK"/>
+</site>
