@@ -107,7 +107,7 @@ public class SubmitToBoaHandler extends AbstractHandler {
 					final IWebBrowser browser = PlatformUI.getWorkbench().getBrowserSupport().createBrowser("Boa");
 					// FIXME the client API doesnt support the call yet, so hard code a URL for now
 //					browser.openURL(job.getUrl());
-					browser.openURL(new URL("http://boa.cs.iastate.edu/boa/?q=boa/job/" + job.getId()));
+					browser.openURL(new URL("https://boa.cs.iastate.edu/boa/?q=boa/job/" + job.getId()));
 				} catch (final PartInitException e) {
 					e.printStackTrace();
 				} catch (final MalformedURLException e) {
